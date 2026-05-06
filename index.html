@@ -2,323 +2,291 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Battle Roster</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gold: #c9a84c;
-    --gold-light: #e8c96a;
-    --gold-dim: #7a6330;
-    --blue-deep: #0a0f1e;
-    --blue-mid: #0d1a35;
-    --blue-panel: #111e40;
-    --blue-border: #1e3560;
-    --white: #e8e4d8;
-    --white-dim: #8a8270;
-    --red-accent: #8b1a1a;
+    --theme-bg:       #0b1218;
+    --theme-card:     #112233;
+    --theme-primary:  #0055aa;
+    --theme-secondary:#d4af37;
+    --theme-accent:   #66ccff;
+    --theme-text:     #f0f0f0;
+    --theme-text-dim: #aabbee;
+    --theme-highlight:#66ccff;
+    --theme-special:  #00d9ff;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
   body {
-    background-color: var(--blue-deep);
-    color: var(--white);
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
     min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 48px 24px 64px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 40px 12px 60px;
   }
 
-  .ornament {
+  /* ── HEADER ── */
+  .page-header {
     width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 8px;
-  }
-  .ornament-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-  }
-  .ornament-diamond {
-    width: 8px;
-    height: 8px;
-    background: var(--gold);
-    transform: rotate(45deg);
-    flex-shrink: 0;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 32px;
   }
 
-  .title-block {
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  .subtitle-top {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 5px;
-    color: var(--gold-dim);
+  .faction-tag {
+    display: inline-block;
+    background: #221a10;
+    border: 1px solid var(--theme-secondary);
+    color: #ffeeb0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    margin-bottom: 14px;
+    padding: 4px 14px;
+    border-radius: 4px;
+    margin-bottom: 16px;
   }
+
   h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(32px, 7vw, 54px);
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 4px;
-    text-shadow: 0 0 40px rgba(201,168,76,0.3);
-    line-height: 1.1;
-  }
-  .subtitle-bottom {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    letter-spacing: 4px;
-    color: var(--white-dim);
+    font-size: 1.6rem;
+    font-weight: 800;
     text-transform: uppercase;
-    margin-top: 12px;
+    color: var(--theme-text);
+    letter-spacing: 4px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .header-sub {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--theme-text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
   }
 
   .divider {
     width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 32px 0 40px;
-  }
-  .divider-line {
-    flex: 1;
+    max-width: 600px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blue-border), transparent);
-  }
-  .divider-text {
-    font-size: 12px;
-    letter-spacing: 5px;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-    white-space: nowrap;
+    background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
+    margin: 0 0 28px;
   }
 
-  .army-grid {
-    width: 100%;
+  /* ── GRID ── */
+  .grid-container {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
+    width: 100%;
+    max-width: 600px;
   }
 
+  /* ── ARMY CARD ── */
   .army-card {
-    display: block;
+    display: flex;
     text-decoration: none;
-    background: var(--blue-panel);
-    border: 1px solid var(--blue-border);
-    border-left: 4px solid var(--gold-dim);
-    padding: 24px 28px;
-    position: relative;
-    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    background-color: var(--theme-card);
+    border: 1px solid var(--theme-primary);
+    border-left: 3px solid var(--theme-secondary);
+    border-radius: 6px;
     overflow: hidden;
+    position: relative;
+    transition: transform 0.1s, border-color 0.2s;
     cursor: pointer;
   }
-  .army-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .army-card:hover {
-    border-color: var(--gold);
-    border-left-color: var(--gold);
-    background: #152040;
-    transform: translateX(4px);
-  }
-  .army-card:active {
-    transform: translateX(2px);
-  }
-  .army-card::after {
-    content: '▶';
-    position: absolute;
-    right: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gold-dim);
-    font-size: 16px;
-    transition: color 0.2s, right 0.2s;
-  }
-  .army-card:hover::after {
-    color: var(--gold);
-    right: 18px;
+  .army-card:active { transform: scale(0.99); }
+  .army-card:hover  { border-color: var(--theme-accent); border-left-color: var(--theme-secondary); }
+
+  /* Header azul igual ao card-header do Marines */
+  .card-header {
+    display: flex;
+    height: 72px;
+    background: linear-gradient(90deg, #000 0%, var(--theme-primary) 120%);
+    border-bottom: 1px solid var(--theme-secondary);
+    flex: 1;
+    align-items: center;
+    padding: 0 16px;
+    gap: 14px;
   }
 
-  .card-faction {
-    font-size: 12px;
-    letter-spacing: 4px;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  .card-name {
-    font-family: 'Cinzel', serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--gold-light);
-    letter-spacing: 1px;
-    margin-bottom: 6px;
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--theme-secondary);
+    border-radius: 4px;
+    background: #000;
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
   }
-  .card-detail {
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--white-dim);
+
+  .header-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .unit-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--theme-text);
+    line-height: 1;
+  }
+
+  .unit-sub {
+    font-size: 0.7rem;
+    color: var(--theme-text-dim);
+    text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .version-badge {
-    display: inline-block;
-    background: var(--red-accent);
-    color: #ffb3b3;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    padding: 3px 9px;
-    text-transform: uppercase;
-  }
-  .card-tags {
-    margin-top: 12px;
+
+  /* Tags dentro do card */
+  .card-body {
+    padding: 10px 16px 12px;
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
-  }
-  .tag {
-    font-size: 11px;
-    letter-spacing: 2px;
-    background: rgba(30,53,96,0.6);
-    border: 1px solid var(--blue-border);
-    padding: 3px 10px;
-    text-transform: uppercase;
-    color: #4a6fa5;
+    gap: 6px;
+    border-top: none;
+    background: var(--theme-card);
   }
 
+  /* Reutiliza estilo de badge do Marines */
+  .tag-unit {
+    background: #003366;
+    border: 1px solid var(--theme-accent);
+    color: #88ccff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .tag-faction {
+    background: #221a10;
+    border: 1px solid var(--theme-secondary);
+    color: #ffeeb0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Seta de navegação */
+  .card-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    background: linear-gradient(90deg, var(--theme-card), #000);
+    color: var(--theme-secondary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    border-left: 1px solid var(--theme-primary);
+  }
+
+  /* ── PLACEHOLDER ── */
   .army-card.placeholder {
     opacity: 0.3;
-    cursor: default;
     pointer-events: none;
-    border-left-color: #2a3a5a;
+    border-left-color: #334;
   }
-  .army-card.placeholder .card-name {
-    color: #2a3a5a;
+  .army-card.placeholder .card-header {
+    background: linear-gradient(90deg, #000 0%, #0d1a26 120%);
+    border-bottom-color: #334;
   }
-  .army-card.placeholder::after {
-    display: none;
+  .army-card.placeholder .card-arrow {
+    color: #334;
+    border-left-color: #334;
   }
 
+  /* ── FOOTER ── */
   .footer {
-    margin-top: 60px;
+    margin-top: 48px;
     text-align: center;
-    width: 100%;
   }
   .footer-text {
-    font-size: 12px;
-    letter-spacing: 4px;
-    color: var(--gold-dim);
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--theme-text-dim);
     text-transform: uppercase;
-    opacity: 0.6;
-    margin-top: 16px;
+    opacity: 0.5;
+  }
+  .footer-line {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
+    margin: 10px auto;
   }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <div class="ornament">
-    <div class="ornament-line"></div>
-    <div class="ornament-diamond"></div>
-    <div class="ornament-line"></div>
-  </div>
+<div class="page-header">
+  <div class="faction-tag">Warhammer 40,000 · 10th Edition</div>
+  <h1>Battle Roster</h1>
+  <div class="header-sub">Adeptus Astartes · TCE-PR</div>
+</div>
 
-  <div class="title-block">
-    <div class="subtitle-top">Adeptus Astartes · TCE-PR</div>
-    <h1>BATTLE ROSTER</h1>
-    <div class="subtitle-bottom">Warhammer 40,000 · 10th Edition</div>
-  </div>
+<div class="divider"></div>
 
-  <div class="divider">
-    <div class="divider-line"></div>
-    <div class="divider-text">Selecione o exército</div>
-    <div class="divider-line"></div>
-  </div>
+<div class="grid-container">
 
-  <div class="army-grid">
-
-    <a class="army-card" href="MarinesV6.1.html">
-      <div class="card-faction">Imperium · Adeptus Astartes</div>
-      <div class="card-name">
-        Ultramarines
-        <span class="version-badge">v6.1</span>
+  <!-- Ultramarines -->
+  <a class="army-card" href="MarinesV6.1.html">
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div class="card-header">
+        <div class="card-icon">⚔️</div>
+        <div class="header-text">
+          <div class="unit-name">Ultramarines <span style="font-size:0.6rem; background:#8b1a1a; color:#ffb3b3; padding:2px 7px; border-radius:3px; font-weight:700; letter-spacing:2px; vertical-align:middle;">V6.1</span></div>
+          <div class="unit-sub">Gladius Task Force · 1000 pts</div>
+        </div>
       </div>
-      <div class="card-detail">Gladius Task Force · 1000 pts</div>
-      <div class="card-tags">
-        <span class="tag">Gladiator Lancer</span>
-        <span class="tag">Terminators</span>
-        <span class="tag">Ballistus Dread.</span>
+      <div class="card-body">
+        <span class="tag-faction">Imperium · Adeptus Astartes</span>
+        <span class="tag-unit">Gladiator Lancer</span>
+        <span class="tag-unit">Terminators</span>
+        <span class="tag-unit">Ballistus Dread.</span>
       </div>
-    </a>
-
-    <div class="army-card placeholder">
-      <div class="card-faction">— slot disponível —</div>
-      <div class="card-name">Próximo Exército</div>
-      <div class="card-detail">Adicione um novo arquivo e atualize este index</div>
     </div>
+    <div class="card-arrow">▶</div>
+  </a>
 
-  </div>
-
-  <div class="footer">
-    <div class="ornament">
-      <div class="ornament-line"></div>
-      <div class="ornament-diamond"></div>
-      <div class="ornament-line"></div>
+  <!-- Placeholder -->
+  <div class="army-card placeholder">
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div class="card-header">
+        <div class="card-icon" style="border-color:#334; font-size:1rem; color:#334;">＋</div>
+        <div class="header-text">
+          <div class="unit-name" style="color:#445;">Próximo Exército</div>
+          <div class="unit-sub">Slot disponível</div>
+        </div>
+      </div>
     </div>
-    <div class="footer-text">For the Emperor · In Nomine Imperator</div>
+    <div class="card-arrow">▶</div>
   </div>
 
 </div>
+
+<div class="footer">
+  <div class="footer-line"></div>
+  <div class="footer-text">For the Emperor · In Nomine Imperator</div>
+  <div class="footer-line"></div>
+</div>
+
 </body>
 </html>
