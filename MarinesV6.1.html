@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Astartes Strike Force</title>
+    <style>
+        :root {
+            /* =========================================
+               TEMA DO EXÉRCITO (SPACE MARINES)
+               ========================================= */
+            --theme-bg: #0b1218;          /* Fundo da tela */
+            --theme-card: #112233;        /* Fundo dos cards */
+            --theme-sheet: #0d1a26;       /* Fundo do datasheet expandido */
+            
+            --theme-primary: #0055aa;     /* Cor principal (Ex: Bordas, headers, tags neutras) - AZUL CLÁSSICO */
+            --theme-secondary: #d4af37;   /* Cor secundária (Ex: Faction tags, ícone de saída, destaques) - DOURADO */
+            --theme-accent: #66ccff;      /* Ação/Veneno (Ex: Botões, tags de habilidade da unidade) - PLASMA */
+            
+            --theme-text: #f0f0f0;        /* Cor do texto padrão (Ex: Nome da unidade, atributos) */
+            --theme-text-dim: #aabbee;    /* Cor do texto secundário (Ex: Labels de atributos) */
+            --theme-highlight: #66ccff;   /* Cor de destaque suave (Ex: Palavras-chave do card) */
+            --theme-special: #00d9ff;     /* Status Especiais (Ex: Saves Invulneráveis, Psíquico) */
+            
+            /* --- STATUS DE PARTIDA --- */
+            --status-used-opac: 0.5;
+            --status-used-filter: grayscale(60%);
+            --status-dead-opac: 0.3;
+            --status-dead-filter: grayscale(100%);
+            
+            /* --- ALERTAS (BATTLE SHOCK / DAMAGED) --- */
+            --alert-bg: #880000;
+            --alert-border: #ff3333;
+            --alert-text: #ffffff;
+            --alert-val-changed: #ff4444;
+            --alert-dead-changed: #aa0000;
+            
+            /* --- CORES DOS BADGES DE HABILIDADE --- */
+            --badge-phase-bg: #f0f0f0;
+            --badge-phase-text: #0b1218;
+            --badge-phase-border: #66ccff;
+
+            --badge-core-bg: #112233;
+            --badge-core-border: #555555;
+            --badge-core-text: #cccccc;
+            
+            --badge-faction-bg: #221a10;
+            --badge-faction-border: #d4af37;
+            --badge-faction-text: #ffeeb0;
+            
+            --badge-unit-bg: #003366;
+            --badge-unit-border: #66ccff;
+            --badge-unit-text: #88ccff;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--theme-bg); color: var(--theme-text);
+            margin: 0; padding: 155px 10px 120px 10px;
+        }
+
+        /* --- FILTROS E BUSCA --- */
+        .filter-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: auto;
+            background: var(--theme-bg); border-bottom: 2px solid var(--theme-primary);
+            display: flex; flex-direction: column; padding: 8px 10px; gap: 6px;
+            z-index: 100; backdrop-filter: blur(5px);
+        }
+
+        .filter-row {
+            display: flex; align-items: center; overflow-x: auto; gap: 6px; width: 100%;
+            padding-bottom: 4px;
+        }
+        .filter-row::-webkit-scrollbar { height: 4px; }
+        .filter-row::-webkit-scrollbar-thumb { background: var(--theme-primary); border-radius: 4px; }
+
+        .filter-label { 
+            color: var(--theme-highlight); font-size: 0.65rem; font-weight: bold; 
+            text-transform: uppercase; min-width: 45px; flex-shrink: 0; 
+        }
+
+        .search-input {
+            background: #000; border: 1px solid var(--theme-primary); color: var(--theme-text);
+            padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; flex: 1; outline: none;
+        }
+        .search-input::placeholder { color: var(--theme-text-dim); }
+
+        .filter-btn {
+            background: transparent; border: 1px solid var(--theme-primary); color: var(--theme-text-dim);
+            padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; white-space: nowrap; cursor: pointer; transition: 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--theme-primary); color: var(--theme-text); border-color: var(--theme-highlight);
+        }
+
+        /* --- BOTÕES DE AÇÃO FLUTUANTES --- */
+        .action-buttons {
+            position: fixed; bottom: 15px; right: 15px; z-index: 900;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .btn-action {
+            background: var(--theme-card); border: 2px solid var(--theme-accent); color: var(--theme-accent);
+            padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            font-size: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.5); transition: 0.2s;
+        }
+        .btn-action.red { border-color: var(--theme-secondary); color: var(--badge-faction-text); }
+        .btn-action:active { transform: scale(0.95); }
+
+        /* --- GRID E CARDS --- */
+        .grid-container { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; }
+        
+        .unit-card {
+            background-color: var(--theme-card); border: 1px solid var(--theme-primary);
+            border-left: 3px solid var(--theme-secondary); border-radius: 6px; overflow: hidden;
+            position: relative; cursor: pointer; transition: transform 0.1s; order: 0; padding-bottom: 40px; 
+        }
+        .unit-card:active { transform: scale(0.99); }
+        
+        .unit-card.used { opacity: var(--status-used-opac); filter: var(--status-used-filter); order: 1; border-left-color: var(--theme-text-dim); }
+        .unit-card.dead { opacity: var(--status-dead-opac); filter: var(--status-dead-filter); order: 2; border-left-color: #000; pointer-events: none; }
+        .unit-card.hidden { display: none !important; }
+
+        .unit-card.battleshocked {
+            border-color: var(--alert-bg); border-left-color: var(--alert-border);
+            box-shadow: inset 0 0 15px var(--alert-bg);
+        }
+
+        .damaged-warning {
+            display: none; background: var(--alert-bg); color: var(--alert-text); text-align: center;
+            font-weight: bold; font-size: 0.75rem; padding: 4px; letter-spacing: 1px;
+            border-top: 1px solid var(--alert-border); border-bottom: 1px solid var(--alert-border);
+        }
+        .is-damaged .damaged-warning { display: block; animation: pulseAlert 2s infinite; }
+        @keyframes pulseAlert { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        .phase-indicator {
+            position: absolute; top: 6px; right: 32px;
+            display: flex; gap: 4px; z-index: 5; pointer-events: none;
+        }
+        .badge-phase {
+            background: var(--theme-highlight); color: #000; font-size: 0.55rem; font-weight: 900;
+            padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        .waha-link {
+            position: absolute; top: 0; right: 0; background: var(--theme-secondary); color: var(--theme-bg);
+            width: 24px; height: 24px; text-align: center; line-height: 24px; pointer-events: auto;
+            font-size: 0.9rem; font-weight: bold; border-bottom-left-radius: 6px; z-index: 10; text-decoration: none;
+        }
+
+        .card-header {
+            display: flex; height: 64px; background: linear-gradient(90deg, #000 0%, var(--theme-primary) 120%); border-bottom: 1px solid var(--theme-secondary);
+        }
+        .card-img { width: 64px; height: 64px; object-fit: cover; border-right: 2px solid var(--theme-secondary); background: #000; }
+        .header-text { flex: 1; padding: 0 12px; display: flex; flex-direction: column; justify-content: center; }
+        .unit-name { font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: var(--theme-text); line-height: 1; margin-bottom: 4px; }
+        .unit-kw { font-size: 0.6rem; color: var(--theme-highlight); text-transform: uppercase; opacity: 0.9; }
+
+        .stats-row { display: flex; background-color: #000; border-bottom: 1px solid var(--theme-primary); }
+        .stat-cell { flex: 1; text-align: center; padding: 6px 0; border-right: 1px solid #222; }
+        .stat-cell:last-child { border-right: none; }
+        .stat-label { display: block; font-size: 0.55rem; color: var(--theme-text-dim); font-weight: bold; }
+        .stat-val { font-size: 0.95rem; font-weight: 700; color: var(--theme-text); }
+        .inv { color: var(--theme-special); }
+
+        .wound-cell { position: relative; cursor: pointer; transition: 0.2s; pointer-events: auto; }
+        .wound-display { display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .w-btn {
+            background: var(--theme-primary); border: 1px solid var(--theme-highlight); color: var(--theme-text); width: 22px; height: 22px;
+            border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center;
+        }
+        .w-btn:active { transform: scale(0.9); }
+        
+        .w-changed { color: var(--alert-val-changed) !important; font-weight: 900; }
+        .oc-changed { color: var(--alert-val-changed) !important; font-weight: 900; }
+        .unit-card.dead .w-changed { color: var(--alert-dead-changed) !important; }
+
+        /* --- BADGES --- */
+        .abilities-area { padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+        .abil-badge {
+            font-size: 0.7rem; padding: 4px 10px; border-radius: 4px; cursor: pointer; pointer-events: auto; text-transform: uppercase; font-weight: bold;
+        }
+        .abil-badge.unit { background: var(--badge-unit-bg); color: var(--badge-unit-text); border: 1px solid var(--badge-unit-border); }
+        .abil-badge.faction { background: var(--badge-faction-bg); color: var(--badge-faction-text); border: 1px solid var(--badge-faction-border); }
+        .abil-badge.core { background: var(--badge-core-bg); color: var(--badge-core-text); border: 1px solid var(--badge-core-border); }
+
+        /* --- CONTROLES DA CARTA --- */
+        .toggle-used-btn {
+            position: absolute; bottom: 10px; right: 10px; background: var(--theme-card); border: 1px solid var(--theme-accent);
+            color: var(--theme-accent); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 20; pointer-events: auto;
+        }
+        .unit-card.used .toggle-used-btn { background: var(--theme-accent); color: #000; border-color: var(--theme-text); }
+
+        .bs-btn {
+            position: absolute; bottom: 10px; left: 10px; background: var(--theme-card); border: 1px solid var(--alert-border);
+            color: var(--alert-val-changed); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 20; pointer-events: auto; transition: 0.2s;
+        }
+        .unit-card.battleshocked .bs-btn { background: var(--alert-dead-changed); color: var(--alert-text); border-color: var(--alert-val-changed); }
+
+        /* --- DATASHEET EXPANDIDO --- */
+        .sheet-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--theme-sheet); z-index: 2000; overflow-y: auto; animation: slideUp 0.2s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .sheet-container { max-width: 800px; margin: 0 auto; padding-bottom: 60px; }
+        .sheet-header {
+            position: sticky; top: 0; background: var(--theme-primary); padding: 15px; display: flex; justify-content: space-between; align-items: flex-start;
+            border-bottom: 2px solid var(--theme-secondary); z-index: 2010;
+        }
+        .sheet-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: var(--theme-text); }
+        .close-btn { background: transparent; border: 1px solid var(--theme-text); color: var(--theme-text); padding: 5px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        .sheet-stats { display: flex; background-color: #000; border-bottom: 2px solid var(--theme-secondary); margin-bottom: 15px; }
+        .sheet-stats .stat-cell { padding: 10px 0; border-right: 1px solid var(--theme-primary); }
+        .sheet-stats .stat-label { font-size: 0.7rem; color: var(--theme-text-dim); }
+        .sheet-stats .stat-val { font-size: 1.1rem; color: var(--theme-text); }
+
+        .section-title {
+            background: var(--theme-primary); padding: 8px 10px; font-size: 0.8rem; font-weight: bold;
+            text-transform: uppercase; color: var(--theme-text); border-top: 1px solid #000;
+            margin-top: 15px; border-left: 3px solid var(--theme-secondary);
+        }
+
+        .w-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: fixed; }
+        .w-table th { text-align: left; color: var(--theme-text-dim); padding: 5px 10px; border-bottom: 1px solid var(--theme-primary); font-size: 0.7rem; }
+        .w-table td { padding: 8px 10px; border-bottom: 1px solid #222; vertical-align: top; }
+        
+        .w-name { font-weight: bold; color: var(--theme-text); display: block; }
+        .tags-wrapper { display: block; margin-top: 3px; }
+        .w-tag-click { font-size: 0.65rem; color: var(--theme-highlight); cursor: pointer; border-bottom: 1px dotted var(--theme-highlight); margin-right: 6px; display: inline-block; }
+        .w-tag-click-core { font-weight: bold; cursor: pointer; margin-right: 6px; border-bottom: 1px dotted var(--theme-secondary); }
+
+        .stat-col { text-align: center; width: 45px; }
+        .col-name-ranged { width: auto; }
+        .col-name-melee { width: auto; }
+        .col-range-ranged { width: 45px; text-align: center; }
+
+        .full-abil-box { padding: 15px; border-bottom: 1px solid #222; }
+        .full-abil-title { color: var(--theme-special); font-weight: bold; font-size: 1rem; margin-bottom: 6px; display: block; }
+        .full-abil-text { color: var(--theme-text); font-size: 0.9rem; line-height: 1.4; }
+
+        .sheet-keywords {
+            background: #000; border-top: 2px solid var(--theme-secondary); padding: 15px;
+            font-size: 0.75rem; color: var(--theme-text-dim); text-transform: uppercase; font-weight: bold; margin-top: 20px; line-height: 1.6; letter-spacing: 0.5px; display: flex; flex-direction: column; gap: 4px;
+        }
+        .kw-group { display: block; }
+        .kw-label { color: var(--theme-secondary); margin-right: 5px; }
+        .kw-val { color: var(--theme-text); }
+        .hidden { display: none !important; }
+
+        /* --- MODAL DE REGRAS --- */
+        .rule-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px);
+        }
+        .rule-modal-box {
+            background: var(--theme-card); border: 2px solid var(--theme-accent); width: 100%; max-width: 400px;
+            border-radius: 6px; box-shadow: 0 0 20px rgba(0,0,0,0.9); animation: popIn 0.2s ease-out; display: flex; flex-direction: column; max-height: 80vh;
+        }
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .rule-header {
+            background: var(--theme-primary); padding: 12px; font-weight: bold; color: var(--theme-text);
+            border-bottom: 2px solid var(--theme-accent); display: flex; justify-content: space-between; align-items: center; text-transform: uppercase;
+        }
+        .rule-body { padding: 20px; font-size: 0.95rem; line-height: 1.5; color: var(--theme-text); overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="filter-nav">
+        <div class="filter-row">
+            <span class="filter-label">BUSCA:</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Buscar regra, nome, palavra-chave..." oninput="executeFilters()">
+        </div>
+        <div id="filter-container" style="display:flex; flex-direction:column; gap:6px; width:100%;">
+            </div>
+    </div>
+
+    <div class="action-buttons" id="action-buttons">
+        <button class="btn-action" onclick="resetMatch()">Nova Batalha</button>
+        <button class="btn-action red" onclick="resetTurn()">Nova Rodada</button>
+    </div>
+
+    <div id="army-container" class="grid-container"></div>
+    <div id="sheets-container"></div>
+
+    <div id="ruleModal" class="rule-modal-overlay" onclick="closeRule()">
+        <div class="rule-modal-box" onclick="event.stopPropagation()">
+            <div class="rule-header"><span id="ruleTitle">Regra</span><span style="cursor:pointer;" onclick="closeRule()">✖</span></div>
+            <div id="ruleDesc" class="rule-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. BANCO DE DADOS DE REGRAS
+        const ruleDatabase = {
+            "Oath of Moment": "If your Army Faction is ADEPTUS ASTARTES, at the start of your Command phase, select one unit from your opponent’s army. Until the start of your next Command phase, that enemy unit is your Oath of Moment target. Each time a model with this ability makes an attack that targets your Oath of Moment target:You can re-roll the Hit roll.If you are using a Codex: Space Marines Detachment and your army does not include one or more units with the BLACK TEMPLARS, BLOOD ANGELS, DARK ANGELS, DEATHWATCH or SPACE WOLVES keywords, add 1 to the Wound roll as well.",
+            "Deep Strike": "Unit can be set up in Reserves instead of on the battlefield. Unit can be set up in your Reinforcements step, more than 9\" horizontally away from all enemy models.",
+            "Rites of Battle": "Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+			"Finest Hour":"Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.",
+			"Adept of the Codex":"CAPTAIN model only. At the start of your Command phase, if the bearer is on the battlefield, instead of selecting a Combat Doctrine to be active for your army, you can select the Tactical Doctrine. If you do, until the start of your next Command phase, that Combat Doctrine is active for the bearer’s unit only, even if you have already selected that Combat Doctrine to be active for your army this battle.",
+			"Astartes Banner":"While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.",
+			"Deeds of Heroism":"Once per battle, when this model is selected to fight, it can use this ability. If it does, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in this model’s unit.",
+            "Rapid Fire 1": "Increase the Attacks by 1 when targeting units within half range.",
+			"Rapid Fire 2": "Increase the Attacks by 2 when targeting units within half range.",
+			"Rapid Fire 3": "Increase the Attacks by 3 when targeting units within half range.",
+            "Assault": "Pode disparar mesmo após ter Avançado (Advance).",
+            "Objective Secured": "Esta unidade tem OC bônus para controlar objetivos.",
+			"Leader": "Before the battle, CHARACTER units with the Leader ability can be attached to one of their Bodyguard units to form an Attached unit. Attached units can only contain one Leader. Attacks cannot be allocated to CHARACTER models in Attached units.",
+			"Deadly Demise D3":"When this model is destroyed, roll one D6. On a 6, each unit within 6\" suffers ‘D3’ mortal wounds." ,
+			"Ballistus Strike":"Each time this model makes a ranged attack that targets a unit that is not Below Half-strength, you can re-roll the Hit roll.",
+			"Twin-Linked":"Weapons with [TWIN-LINKED] in their profile are known as Twin-linked weapons. Each time an attack is made with such a weapon, you can re-roll that attack’s Wound roll.",
+			"Blast":"Add 1 to the Attacks characteristic for every five models in the target unit (rounding down).Can never be used against a target that is within Engagement Range of any units from the attacking model’s army (including its own).",
+			"Hammer of Wrath":"Each time this unit ends a Charge move, select one enemy unit within Engagement Range of it, then roll one D6 for each model in this unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers 1 mortal wound.",
+			"Astartes Banner":"While this unit contains an Ancient, add 1 to the Objective Control characteristic of models in this unit.",
+			"Command Squad":"While a CHARACTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.",
+			"Company Heroes":"You must attach one CAPTAIN or CHAPTER MASTER model to this unit. If this is not possible, this unit does not take part in the battle and counts as having been destroyed.",
+			"Pistol":"Can be shot even if the bearer’s unit is within Engagement Range of enemy units, but must target one of those enemy units. Cannot be shot alongside any other non-Pistol weapon (except by a MONSTER or VEHICLE).",
+			"Devastating Wounds":"A Critical Wound inflicts mortal wounds equal to the weapon’s Damage characteristic, instead of any normal damage.",
+			"Heavy":"Add 1 to Hit rolls if the bearer’s unit Remained Stationary this turn.",
+			"Sustained Hits 2":"Each Critical Hit scores ‘2’ additional hits on the target.",
+			"Precision":"When targeting an Attached unit, the attacking model’s player can have the attack allocated to a CHARACTER model in that unit visible to the bearer.",
+			"Meteoric Descent":"In your Movement phase, when this unit is set up on the battlefield using the Deep Strike ability, it can perform a meteoric descent. If it does, this unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.",
+			"Thunderous Impact":"Each time a model in this unit makes a melee attack, if this unit made a Charge move this turn, improve the Strength and Damage characteristics of that attack by 1.",
+			"Teleport Homer":"At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent’s deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3\" of that token and not within 9\" of any enemy models. That token is then removed.",
+			"Fury of the First": "Each time a model in this unit makes an attack that targets your Oath of Moment target, add 1 to the Hit roll.",
+			"Aquilon Optics":"Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving those attacks.",
+			"Anti-fly 2+":"An unmodified Wound roll of ‘2+’ against a target with the matching keyword scores a Critical Wound."
+        };
+
+        const stratagemDatabase = {
+            "ARMOUR OF CONTEMPT": { cost: "1CP", phase: "Shooting or Fight phase (Enemy)", desc: "Target: One Adeptus Astartes unit from your army that was just selected as the target of one or more attacking units.\n\nEffect: Until the end of the phase, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1." },
+            "ONLY IN DEATH DOES DUTY END": { cost: "2CP", phase: "Fight phase", desc: "Target: One Adeptus Astartes unit from your army that was just selected as the target of one or more attacking units.\n\nEffect: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play." },
+            "HONOUR THE CHAPTER": { cost: "1CP", phase: "Fight phase", desc: "Target: One Adeptus Astartes unit from your army that is eligible to fight.\n\nEffect: Until the end of the phase, melee weapons equipped by models in your unit have the [LANCE] ability. If your unit is under the effects of the Assault Doctrine, they also improve their AP by 1." },
+            "FIRE OVERWATCH": { cost: "1CP", phase: "Movement or Charge phase (Enemy)", desc: "Target: One unit from your army.\n\nEffect: Your unit can shoot as if it were your Shooting phase, but you must score unmodified Hit rolls of 6 to score a hit." },
+            "RAPID INGRESS": { cost: "1CP", phase: "End of Enemy Movement phase", desc: "Target: One unit from your army that is in Reserves.\n\nEffect: Set up that unit on the battlefield as if it were your Movement phase." },
+            "COMMAND RE-ROLL": { cost: "1CP", phase: "Any phase", desc: "Effect: You can re-roll any one Hit roll, Wound roll, Damage roll, saving throw, Advance roll, Charge roll, Desperate Escape test, Hazardous test, or just about any other D6 roll." },
+			"ADAPTIVE STRATEGY": { cost: "1CP", phase: "Your Command phase", desc: "TARGET: One ADEPTUS ASTARTES unit from your army. Select the Devastator Doctrine, Tactical Doctrine or Assault Doctrine. Until the start of your next Command phase, that Combat Doctrine is active for that unit instead of any other Combat Doctrine that is active for your army, even if you have already selected that doctrine this battle." },
+			"STORM OF FIRE": { cost: "1CP", phase: "Your Shooting phase", desc: "TARGET: One ADEPTUS ASTARTES unit from your army that has not been selected to shoot this phase.Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability. If your unit is under the effects of the Devastator Doctrine, until the end of the phase, improve the Armour Penetration characteristic of such weapons by 1 as well." },
+			"SQUAD TACTICS": { cost: "1CP", phase: "Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move.", desc: "TARGET: One Adeptus Astartes Infantry or Adeptus Astartes Mounted unit from your army that is within 9'' of the enemy unit that just ended that move.Your unit can make a Normal move of up to D6'', or a Normal move of up to 6'' instead if it is under the effects of the Tactical Doctrine." },
+			"INSANE BRAVERY": { cost: "1CP", phase: "Battle-shock step of your Command phase, just before you take a Battle-shock test for a unit from your army.", desc: "TARGET: That unit from your army. EFFECT: Your unit automatically passes that Battle-shock test. RESTRICTIONS: You cannot use this Stratagem more than once per battle." },
+			"GRENADE": { cost: "1CP", phase: "Your Shooting phase", desc: "TARGET: One GRENADES unit from your army (excluding units that Advanced, Fell Back or have shot this turn) that is not within Engagement Range of one or more enemy units. EFFECT: Select one GRENADES model in your unit and one enemy unit that is not within Engagement Range of any units from your army and is within 8''of and visible to your GRENADES model. Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound." },
+			"HEROIC INTERVENTION": { cost: "1CP", phase: "Your opponent's Charge phase, just after an enemy unit ends a Charge move", desc: "TARGET: One unit from your army that is within 6'' of that enemy unit and would be eligible to declare a charge against that enemy unit if it were your Charge phase. RESTRICTIONS: You can only select a VEHICLE unit from your army if it is a WALKER. Note that even if this charge is successful, your unit does not receive any Charge bonus this turn." },			
+			"GO TO GROUND": { cost: "1CP", phase: "Your opponent's Shooting phase, just after an enemy unit has selected its targets.", desc: "TARGET: One INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, all models in your unit have a 6+ invulnerable save and have the Benefit of Cover." },						
+			"EPIC CHALLENGE": { cost: "1CP", phase: "Fight phase, when a CHARACTER unit from your army that is within Engagement Range of one or more Attached units is selected to fight.", desc: "TARGET: One CHARACTER model in your unit.EFFECT: Until the end of the phase, all melee attacks made by that model have the [PRECISION] ability."},
+			"COUNTER-OFFENSIVE": { cost: "2CP", phase: "Your Charge phase, just after a VEHICLE unit from your army ends a Charge move.", desc: "TARGET: One unit from your army that is within Engagement Range of one or more enemy units and that has not already been selected to fight this phase.EFFECT: Your unit fights next."},			
+			"TANK SHOCK": { cost: "1CP", phase: "Fight phase, just after an enemy unit has fought.", desc: "TARGET: That VEHICLE unit.EFFECT: Select one enemy unit within Engagement Range of your unit, and select one VEHICLE model in your unit that is within Engagement Range of that enemy unit. Roll a number of D6 equal to the Toughness characteristic of the selected VEHICLE model. For each 5+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds)."},
+			"SMOKESCREEN": { cost: "1CP", phase: "Your opponent's Shooting phase, just after an enemy unit has selected its targets.", desc: "TARGET: One SMOKE unit from your army that was selected as the target of one or more of the attacking unit's attacks.EFFECT: Until the end of the phase, all models in your unit have the Benefit of Cover and the Stealth ability."},			
+		};
+
+        // 2. CONFIGURAÇÃO DO EXÉRCITO (SPACE MARINES)
+		
+        const armyConfig = {
+            units: [
+			    {
+                    id: "captain", name: "Captain", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain", imgText: "CP",
+                    subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, CAPTAIN",
+                    stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '5', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","EPIC CHALLENGE","COUNTER-OFFENSIVE"],
+                    coreAbilities: ["Leader"], 
+                    damaged: null,
+                    factionAbilities: ["Oath of Moment"],
+                    unitAbilities: ["Rites of Battle", "Finest Hour", "Adept of the Codex"],
+                    rangedWeapons: [{ name: "Master-crafted bolter", tags: [], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" }],
+					rangedWeapons: [{ name: "Bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "2+", s: "4", ap: "0", d: "1" }],
+                    meleeWeapons: [{ name: "Master-crafted power weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }]
+                },
+				{
+                    id: "bladeGuard", name: "Bladeguard Ancient", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Bladeguard-Ancient", imgText: "BA",
+                    subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, ANCIENT, BLADEGUARD ANCIENT",
+                    stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '4', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","EPIC CHALLENGE","COUNTER-OFFENSIVE"],
+                    coreAbilities: ["Leader"], 
+                    damaged: null,
+                    factionAbilities: ["Oath of Moment"],
+                    unitAbilities: ["Astartes Banner", "Deeds of Heroism"],
+					rangedWeapons: [{ name: "Heavy bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "3+", s: "4", ap: "-1", d: "1" }],
+                    meleeWeapons: [{ name: "Close combat weapon", tags: [], a: "5", ws: "2+", s: "4", ap: "0", d: "1" }]
+                },
+                {
+                    id: "intercessorsJumpPack", name: "Assault Intercessors With Jump Packs", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Assault-Intercessors-With-Jump-Packs", imgText: "IN",
+                    subtitle: "Infantry • Fly", keywords: "INFANTRY, GRENADES, JUMP PACK, FLY, IMPERIUM, TACTICUS, ASSAULT INTERCESSORS WITH JUMP PACKS, ADEPTUS ASTARTES",
+                    stats: { m: '12"', t: '4', sv: '3+', inv: '-', w: '2', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],				                    
+					coreAbilities: ["Deep Strike"], 
+                    damaged: null,
+                    factionAbilities: ["Oath of Moment"],
+                    unitAbilities: ["Hammer of Wrath"],
+                    rangedWeapons: [{ name: "Heavy bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "3+", s: "4", ap: "-1", d: "1" }],
+                    meleeWeapons: [{ name: "Astartes chainsword", tags: [], a: "4", ws: "3+", s: "4", ap: "-1", d: "1" }]
+                },
+				{
+					id: "companyHeroes", name: "Company Heroes", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Company-Heroes", imgText: "CH",
+					subtitle: "Infantry • Ancient", keywords: "INFANTRY, GRENADES, IMPERIUM, TACTICUS, COMPANY HEROES, ANCIENT, ADEPTUS ASTARTES",
+					stats: { m: '6"', t: '4', sv: '3+', inv: '-', w: '4', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],				
+					coreAbilities: null, 	
+					damaged: null,
+					factionAbilities: ["Oath of Moment"],
+					unitAbilities: ["Astartes Banner", "Command Squad", "Company Heroes"],
+					rangedWeapons: [
+					                { name: "Bolt Pistol Ancient, Company Champion, Company Veteran e Company Veteran", tags: ["Pistol"], range: "12\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" }, 
+									{ name: "Bolt rifle Ancient", tags: [], range: "24\"", a: "2", bs: "3+", s: "4", ap: "-1", d: "D6" },
+									{ name: "Master-crafted bolt rifle Company Veteran", tags: ["Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" },
+									{ name: "Master-crafted heavy bolter Company Veteran", tags: ["Heavy", "Sustained Hits 2"], range: "36\"", a: "3", bs: "3+", s: "5", ap: "-1", d: "3" },
+								   ],
+					meleeWeapons: [
+					               { name: "Close combat weapon Ancient, Company Veteran e Company Veteran", tags: [], a: "5", ws: "3+", s: "4", ap: "0", d: "1" },
+					               { name: "Master-crafted power weapon Company Champion", tags: ["Precision"], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }
+								  ]
+                },
+				{
+					id: "inceptorSquad", name: "Inceptor Squad", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Inceptor-Squad", imgText: "IS",
+					subtitle: "Infantry • Fly", keywords: "INFANTRY, JUMP PACK, FLY, IMPERIUM, GRAVIS, INCEPTOR SQUAD, ADEPTUS ASTARTES",
+					stats: { m: '6"', t: '4', sv: '3+', inv: '-', w: '4', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],				
+					coreAbilities: ["Deep Strike"], 	
+					damaged: null,
+					factionAbilities: ["Oath of Moment"],
+					unitAbilities: ["Meteoric Descent"],
+					rangedWeapons: [
+					                { name: "Assault bolters", tags: ["Assault", "Pistol", "Sustained Hits 2", "Twin-Linked"], range: "18\"", a: "3", bs: "3+", s: "5", ap: "-1", d: "2" }
+								   ],
+					meleeWeapons: [
+					               { name: "Close combat weapon", tags: [], a: "3", ws: "3+", s: "4", ap: "0", d: "1" },
+								  ]
+                },
+				{
+					id: "outriderSquad", name: "Outrider Squad", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Outrider-Squad", imgText: "OS",
+					subtitle: "Mounted", keywords: "MOUNTED, GRENADES, IMPERIUM, OUTRIDER SQUAD, ADEPTUS ASTARTES",
+					stats: { m: '12"', t: '5', sv: '3+', inv: '-', w: '4', ld: '6+', oc: '2' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],				
+					coreAbilities: null, 	
+					damaged: null,
+					factionAbilities: ["Oath of Moment"],
+					unitAbilities: ["Thunderous Impact"],
+					rangedWeapons: [
+					                { name: "Heavy bolt pistol", tags: ["Pistol"], range: "12\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" },
+									{ name: "Twin bolt rifle", tags: ["Twin-Linked"], range: "24\"", a: "2", bs: "3+", s: "4", ap: "-1", d: "1" }
+								   ],
+					meleeWeapons: [
+					               { name: "Astartes chainsword", tags: [], a: "4", ws: "3+", s: "4", ap: "-1", d: "1" },
+								  ]
+                },
+				{
+					id: "terminatorSquad", name: "Terminator Squad", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Terminator-Squad", imgText: "TS",
+					subtitle: "Infantry • Terminator", keywords: "INFANTRY, IMPERIUM, TERMINATOR, TERMINATOR SQUAD, ADEPTUS ASTARTES",
+					stats: { m: '5"', t: '5', sv: '2+', inv: '4++', w: '3', ld: '6+', oc: '1' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","SQUAD TACTICS","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","INSANE BRAVERY","GRENADE","HEROIC INTERVENTION","FIRE OVERWATCH","RAPID INGRESS","GO TO GROUND","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],				
+					coreAbilities: ["Deep Strike"], 	
+					damaged: null,
+					factionAbilities: ["Oath of Moment"],
+					unitAbilities: ["Teleport Homer","Fury of the First"],
+					rangedWeapons: [
+					                { name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "3+", s: "4", ap: "0", d: "1" },
+									{ name: "Assault cannon", tags: ["Devastating Wounds"], range: "24\"", a: "6", bs: "3+", s: "6", ap: "0", d: "1" }
+								   ],
+					meleeWeapons: [
+					               { name: "Power fist", tags: [], a: "3", ws: "3+", s: "8", ap: "-2", d: "2" },
+								  ]
+                },
+				{
+					id: "gladiatorLancer", name: "Gladiator Lancer", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Gladiator-Lancer", imgText: "GS",
+					subtitle: "Vehicle", keywords: "VEHICLE, SMOKE, IMPERIUM, GLADIATOR LANCER, ADEPTUS ASTARTES",
+					stats: { m: '10"', t: '10', sv: '3+', inv: '-', w: '12', ld: '6+', oc: '3' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","TANK SHOCK","INSANE BRAVERY","FIRE OVERWATCH","RAPID INGRESS","SMOKESCREEN","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],
+					coreAbilities: ["Deadly Demise D3"], 	
+					damaged: { wounds: "1-4", effect: "While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll." },
+					factionAbilities: ["Oath of Moment"],
+					unitAbilities: ["Aquilon Optics"],
+					rangedWeapons: [
+					                { name: "Lancer laser destroyer", tags: ["Heavy"], range: "72\"", a: "2", bs: "3+", s: "14", ap: "-4", d: "D6+3" },
+									{ name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "3+", s: "4", ap: "0", d: "1" },
+									{ name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "3+", s: "4", ap: "0", d: "1" },
+									{ name: "Icarus rocket pod", tags: ["Anti-fly 2+"], range: "24\"", a: "D3", bs: "3+", s: "8", ap: "-1", d: "2" },
+									{ name: "Ironhail heavy stubber", tags: ["Rapid Fire 3"], range: "36\"", a: "3", bs: "3+", s: "4", ap: "0", d: "1" },
+									
+								   ],
+					meleeWeapons: [
+					               { name: "Armoured hull", tags: [], a: "3", ws: "4+", s: "6", ap: "0", d: "1" },
+								  ]
+                },
+				{
+                    id: "ballistusDreadnought", name: "Ballistus Dreadnought", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Ballistus-Dreadnought", imgText: "BD",
+                    subtitle: "Vehicle", keywords: "VEHICLE, WALKER, IMPERIUM, DREADNOUGHT, BALLISTUS DREADNOUGHT, ADEPTUS ASTARTES",
+                    stats: { m: '8"', t: '10', sv: '2+', inv: '-', w: '12', ld: '6+', oc: '4' },
+                    stratagems: ["ADAPTIVE STRATEGY","STORM OF FIRE","HONOUR THE CHAPTER","ONLY IN DEATH DOES DUTY END","ARMOUR OF CONTEMPT","TANK SHOCK","INSANE BRAVERY","FIRE OVERWATCH","RAPID INGRESS","COMMAND RE-ROLL","COUNTER-OFFENSIVE"],
+                    coreAbilities: ["Deadly Demise D3"], 	
+					damaged: { wounds: "1-4", effect: "While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll." },
+                    factionAbilities: ["Oath of Moment"],
+                    unitAbilities: ["Ballistus Strike"],
+                    rangedWeapons: [
+					                { name: "-> Ballistus missile launcher – frag", tags: ["Blast"], range: "48\"", a: "2D6", bs: "3+", s: "5", ap: "0", d: "1" }, 
+					                { name: "-> Ballistus missile launcher – krak", tags: [], range: "48\"", a: "2", bs: "3+", s: "10", ap: "-2", d: "D6" },
+									{ name: "Ballistus lascannon", tags: [], range: "48\"", a: "2", bs: "3+", s: "12", ap: "-3", d: "D6+1" },
+									{ name: "Twin storm bolter", tags: ["Rapid Fire 2", "Twin-Linked"], range: "48\"", a: "2", bs: "3+", s: "12", ap: "-3", d: "D6+1" },
+								   ],
+                    meleeWeapons: [{ name: "Armoured feet", tags: [], a: "5", ws: "3+", s: "7", ap: "0", d: "1" }]
+                },
+            ]
+        };
+
+        // --- SISTEMA DE ESTADO E FILTROS DINÂMICOS ---
+        let matchState = JSON.parse(localStorage.getItem('astartesMatchState')) || {};
+        let filters = { kw: 'ALL', core: 'ALL', phase: 'ALL' };
+
+        function saveState() {
+            localStorage.setItem('astartesMatchState', JSON.stringify(matchState));
+        }
+
+        function generateTags(tagsArray) {
+            if (!tagsArray || tagsArray.length === 0) return "";
+            return `<span class="tags-wrapper">${tagsArray.map(t => `<span class="w-tag-click" onclick="showRule(event, '${t}')">[${t}]</span>`).join(' ')}</span>`;
+        }
+
+        // --- RENDERIZAÇÃO DINÂMICA DE FILTROS ---
+        function renderFilters() {
+            const dataSets = {
+                kw: new Set(),
+                core: new Set(),
+                phase: new Set()
+            };
+
+            armyConfig.units.forEach(u => {
+                if (u.subtitle) u.subtitle.split('•').forEach(s => dataSets.kw.add(s.trim().toUpperCase()));
+                if (u.coreAbilities) u.coreAbilities.forEach(c => dataSets.core.add(c.trim().toUpperCase()));
+                if (u.phases) u.phases.forEach(p => dataSets.phase.add(p.trim().toUpperCase()));
+            });
+
+            const prepareArray = (set) => ['ALL', ...Array.from(set).sort()];
+
+            const createRow = (label, type, arr) => {
+                if (arr.length <= 1) return ''; 
+                return `<div class="filter-row">
+                    <span class="filter-label">${label}:</span>
+                    ${arr.map(s => `<button class="filter-btn ${s === 'ALL' ? 'active' : ''}" onclick="applyFilter('${type}', '${s}', this)">${s}</button>`).join('')}
+                </div>`;
+            };
+
+            document.getElementById('filter-container').innerHTML =
+                createRow('KWORDS', 'kw', prepareArray(dataSets.kw)) +
+                createRow('CORE', 'core', prepareArray(dataSets.core)) +
+                createRow('PHASE', 'phase', prepareArray(dataSets.phase));
+        }
+
+        window.applyFilter = (type, val, btn) => {
+            const row = btn.parentElement;
+            row.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filters[type] = val;
+            executeFilters();
+        };
+
+        window.executeFilters = () => {
+            let search = document.getElementById('search-input').value.toLowerCase();
+            
+            document.querySelectorAll('.unit-card').forEach(c => {
+                let id = c.id.replace('card-', '');
+                let u = armyConfig.units.find(x => x.id === id);
+
+                let kwArray = u.subtitle ? u.subtitle.toUpperCase().split('•').map(s=>s.trim()) : [];
+                let coreArray = u.coreAbilities ? u.coreAbilities.map(x=>x.toUpperCase().trim()) : [];
+                let phaseArray = u.phases ? u.phases.map(x=>x.toUpperCase().trim()) : [];
+
+                let showKw = filters.kw === 'ALL' || kwArray.includes(filters.kw);
+                let showCore = filters.core === 'ALL' || coreArray.includes(filters.core);
+                let showPhase = filters.phase === 'ALL' || phaseArray.includes(filters.phase);
+                
+                let showSearch = c.getAttribute('data-search').includes(search);
+
+                if (showKw && showCore && showPhase && showSearch) {
+                    c.classList.remove('hidden');
+                } else {
+                    c.classList.add('hidden');
+                }
+            });
+        };
+
+        function renderArmy() {
+            const container = document.getElementById('army-container');
+            const sheets = document.getElementById('sheets-container');
+
+            armyConfig.units.forEach(u => {
+                let originalW = parseInt(u.stats.w) || 1;
+                if (!matchState[u.id]) matchState[u.id] = { wounds: originalW, used: false, battleshocked: false };
+            });
+            saveState();
+
+            const getStatsHTML = (u, prefix) => `
+                <div class="stat-cell"><span class="stat-label">M</span><span class="stat-val">${u.stats.m}</span></div>
+                <div class="stat-cell"><span class="stat-label">T</span><span class="stat-val">${u.stats.t}</span></div>
+                <div class="stat-cell"><span class="stat-label">Sv</span><span class="stat-val">${u.stats.sv}</span></div>
+                <div class="stat-cell"><span class="stat-label">Inv</span><span class="${u.stats.inv !== '-' ? 'stat-val inv' : 'stat-val'}">${u.stats.inv}</span></div>
+                
+                <div class="stat-cell wound-cell" onclick="toggleWoundControls(event)">
+                    <span class="stat-label">W</span>
+                    <div class="wound-display">
+                        <button class="w-btn minus hidden" onclick="adjustWound(event, '${u.id}', -1)">-</button>
+                        <span class="stat-val" id="${prefix}-w-val-${u.id}">${u.stats.w}</span>
+                        <button class="w-btn plus hidden" onclick="adjustWound(event, '${u.id}', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-cell"><span class="stat-label">Ld</span><span class="stat-val">${u.stats.ld}</span></div>
+                <div class="stat-cell"><span class="stat-label">OC</span><span class="stat-val" id="${prefix}-oc-val-${u.id}">${u.stats.oc}</span></div>
+            `;
+
+            armyConfig.units.forEach(u => {
+                let searchStr = [
+                    u.name, u.keywords, u.subtitle, 
+                    ...(u.coreAbilities || []), 
+                    ...(u.factionAbilities || []), 
+                    ...(u.unitAbilities || []), 
+                    ...(u.phases || []),
+                    ...(u.stratagems || []),
+                    ...(u.rangedWeapons || []).map(w => w.name), 
+                    ...(u.meleeWeapons || []).map(w => w.name)
+                ].join(' ').toLowerCase();
+
+                let phaseBadges = (u.phases || []).map(p => `<span class="badge-phase">${p}</span>`).join('');
+
+                container.innerHTML += `
+                    <div class="unit-card" id="card-${u.id}" data-search="${searchStr}" onclick="openFullSheet('sheet-${u.id}')">
+                        ${phaseBadges ? `<div class="phase-indicator">${phaseBadges}</div>` : ''}
+                        <a href="${u.wahaLink}" class="waha-link" target="_blank" onclick="event.stopPropagation()">↗</a>
+                        <div class="card-header">
+                            <img src="https://placehold.co/64x64/333/ccc?text=${u.imgText}" class="card-img">
+                            <div class="header-text"><span class="unit-name">${u.name}</span><span class="unit-kw">${u.subtitle}</span></div>
+                        </div>
+                        <div class="stats-row">${getStatsHTML(u, 'card')}</div>
+                        <div class="damaged-warning">⚠️ DAMAGED: -1 TO HIT</div>
+                        <div class="abilities-area">
+                            ${(u.coreAbilities || []).map(a => `<span class="abil-badge core" onclick="showRule(event, '${a}')">${a}</span>`).join('')}
+                            ${(u.factionAbilities || []).map(a => `<span class="abil-badge faction" onclick="showRule(event, '${a}')">${a}</span>`).join('')}
+                            ${(u.unitAbilities || []).map(a => `<span class="abil-badge unit" onclick="showRule(event, '${a}')">${a}</span>`).join('')}
+                        </div>
+                        <button class="bs-btn" onclick="toggleBattleshock(event, '${u.id}')">BATTLE SHOCK</button>
+                        <button class="toggle-used-btn" onclick="toggleUsedState(event, '${u.id}')">AÇÃO</button>
+                    </div>`;
+
+                sheets.innerHTML += `
+                    <div id="sheet-${u.id}" class="sheet-overlay">
+                        <div class="sheet-container">
+                            <div class="sheet-header">
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div class="sheet-title">${u.name}</div>
+                                    ${phaseBadges ? `<div style="display: flex; gap: 4px;">${phaseBadges}</div>` : ''}
+                                </div>
+                                <button class="close-btn" onclick="closeFullSheet()" style="align-self: flex-start;">X</button>
+                            </div>
+                            <div class="sheet-stats stats-row">${getStatsHTML(u, 'sheet')}</div>
+                            <div class="damaged-warning">⚠️ DAMAGED: -1 TO HIT (Aplica-se aos ataques abaixo)</div>
+                            
+                            ${u.rangedWeapons?.length ? `<div class="section-title">Ranged Weapons</div><table class="w-table"><thead><tr><th class="col-name-ranged">Weapon</th><th class="col-range-ranged">R</th><th class="stat-col">A</th><th class="stat-col">BS</th><th class="stat-col">S</th><th class="stat-col">AP</th><th class="stat-col">D</th></tr></thead><tbody>${u.rangedWeapons.map(w => `<tr><td><span class="w-name">${w.name}</span>${generateTags(w.tags)}</td><td class="col-range-ranged">${w.range}</td><td class="stat-col">${w.a}</td><td class="stat-col">${w.bs}</td><td class="stat-col">${w.s}</td><td class="stat-col">${w.ap}</td><td class="stat-col">${w.d}</td></tr>`).join('')}</tbody></table>` : ''}
+
+                            ${u.meleeWeapons?.length ? `<div class="section-title">Melee Weapons</div><table class="w-table"><thead><tr><th class="col-name-melee">Weapon</th><th class="stat-col">A</th><th class="stat-col">WS</th><th class="stat-col">S</th><th class="stat-col">AP</th><th class="stat-col">D</th></tr></thead><tbody>${u.meleeWeapons.map(w => `<tr><td><span class="w-name">${w.name}</span>${generateTags(w.tags)}</td><td class="stat-col">${w.a}</td><td class="stat-col">${w.ws}</td><td class="stat-col">${w.s}</td><td class="stat-col">${w.ap}</td><td class="stat-col">${w.d}</td></tr>`).join('')}</tbody></table>` : ''}
+
+                            ${u.coreAbilities?.length ? `<div class="section-title">Core Abilities</div><div class="full-abil-box"><span class="full-abil-text">${u.coreAbilities.map(a => `<span class="w-tag-click-core" style="color: var(--theme-secondary);" onclick="showRule(event, '${a}')">${a}</span>`).join(' ')}</span></div>` : ''}
+                            ${u.unitAbilities?.length || u.factionAbilities?.length ? `<div class="section-title">Abilities</div>${[...(u.factionAbilities || []), ...(u.unitAbilities || [])].map(a => `<div class="full-abil-box"><span class="full-abil-title">${a}</span><span class="full-abil-text">${ruleDatabase[a] || ''}</span></div>`).join('')}` : ''}
+                            ${u.damaged ? `<div class="section-title">Damaged: ${u.damaged.wounds} Wounds Remaining</div><div class="full-abil-box"><span class="full-abil-text">${u.damaged.effect}</span></div>` : ''}
+                            
+                            ${u.stratagems?.length ? `<div class="section-title">Stratagems</div><div class="full-abil-box" style="display:flex; flex-direction:column; gap:8px;">${u.stratagems.map(s => { let sData = stratagemDatabase[s] || {cost: "?", phase: "?"}; return `<div><span class="w-tag-click-core" style="font-size: 0.85rem; color: var(--theme-special); border-bottom-color: var(--theme-special);" onclick="showRule(event, '${s}')">${s} [${sData.cost}]</span> <span style="font-size: 0.75rem; color: var(--theme-text-dim); text-transform: uppercase;">${sData.phase}</span></div>`; }).join('')}</div>` : ''}
+
+                            <div class="sheet-keywords"><span class="kw-group"><span class="kw-label">KEYWORDS:</span><span class="kw-val">${u.keywords}</span></span><span class="kw-group"><span class="kw-label">FACTION KEYWORDS:</span><span class="kw-val">ADEPTUS ASTARTES</span></span></div>
+                        </div>
+                    </div>`;
+            });
+
+            armyConfig.units.forEach(u => {
+                updateWoundUI(u.id);
+                updateUsedUI(u.id);
+                updateBattleshockUI(u.id);
+            });
+        }
+
+        // --- SISTEMAS DE INTERFACE ---
+        window.toggleWoundControls = (e) => {
+            e.stopPropagation();
+            let cell = e.currentTarget;
+            let minus = cell.querySelector('.minus');
+            let plus = cell.querySelector('.plus');
+            if(minus) minus.classList.toggle('hidden');
+            if(plus) plus.classList.toggle('hidden');
+        };
+
+        window.adjustWound = (e, id, delta) => {
+            e.stopPropagation();
+            let originalW = parseInt(armyConfig.units.find(u => u.id === id).stats.w) || 1;
+            matchState[id].wounds += delta;
+            if (matchState[id].wounds < 0) matchState[id].wounds = 0;
+            if (matchState[id].wounds > originalW) matchState[id].wounds = originalW;
+            saveState();
+            updateWoundUI(id);
+        };
+
+        window.updateWoundUI = (id) => {
+            let unit = armyConfig.units.find(u => u.id === id);
+            let originalW = parseInt(unit.stats.w) || 1;
+            let state = matchState[id];
+            
+            let cardVal = document.getElementById(`card-w-val-${id}`);
+            let sheetVal = document.getElementById(`sheet-w-val-${id}`);
+            if(cardVal) { cardVal.innerText = state.wounds; cardVal.classList.toggle('w-changed', state.wounds !== originalW); }
+            if(sheetVal) { sheetVal.innerText = state.wounds; sheetVal.classList.toggle('w-changed', state.wounds !== originalW); }
+
+            let card = document.getElementById(`card-${id}`);
+            let sheet = document.getElementById(`sheet-${id}`);
+            
+            if (card) state.wounds <= 0 ? card.classList.add('dead') : card.classList.remove('dead');
+
+            let isDamaged = false;
+            if (unit.damaged && state.wounds > 0) {
+                let parts = unit.damaged.wounds.split('-');
+                let min = parseInt(parts[0]);
+                let max = parseInt(parts[1]);
+                if (state.wounds >= min && state.wounds <= max) {
+                    isDamaged = true;
+                }
+            }
+            if (card) isDamaged ? card.classList.add('is-damaged') : card.classList.remove('is-damaged');
+            if (sheet) isDamaged ? sheet.classList.add('is-damaged') : sheet.classList.remove('is-damaged');
+        };
+
+        window.toggleBattleshock = (e, id) => {
+            e.stopPropagation();
+            matchState[id].battleshocked = !matchState[id].battleshocked;
+            saveState();
+            updateBattleshockUI(id);
+        };
+
+        window.updateBattleshockUI = (id) => {
+            let state = matchState[id];
+            let originalOC = armyConfig.units.find(u => u.id === id).stats.oc;
+            
+            let cardVal = document.getElementById(`card-oc-val-${id}`);
+            let sheetVal = document.getElementById(`sheet-oc-val-${id}`);
+            let card = document.getElementById(`card-${id}`);
+
+            if (state.battleshocked) {
+                if(cardVal) { cardVal.innerText = '0'; cardVal.classList.add('oc-changed'); }
+                if(sheetVal) { sheetVal.innerText = '0'; sheetVal.classList.add('oc-changed'); }
+                if(card) { card.classList.add('battleshocked'); }
+            } else {
+                if(cardVal) { cardVal.innerText = originalOC; cardVal.classList.remove('oc-changed'); }
+                if(sheetVal) { sheetVal.innerText = originalOC; sheetVal.classList.remove('oc-changed'); }
+                if(card) { card.classList.remove('battleshocked'); }
+            }
+        };
+
+        window.toggleUsedState = (e, id) => {
+            e.stopPropagation();
+            matchState[id].used = !matchState[id].used;
+            saveState();
+            updateUsedUI(id);
+        };
+
+        window.updateUsedUI = (id) => {
+            let state = matchState[id];
+            let card = document.getElementById(`card-${id}`);
+            if (card) {
+                let btn = card.querySelector('.toggle-used-btn');
+                state.used ? card.classList.add('used') : card.classList.remove('used');
+                if(btn) btn.innerText = state.used ? "✓ USADO" : "AÇÃO";
+            }
+        };
+
+        window.resetTurn = () => {
+            for(let id in matchState) { 
+                matchState[id].used = false; 
+                matchState[id].battleshocked = false; 
+                updateUsedUI(id); 
+                updateBattleshockUI(id);
+            }
+            saveState();
+        };
+
+        window.resetMatch = () => {
+            if (confirm("Deseja ZERAR a partida? Isso irá restaurar Vida, Ações e limpar Battleshocks.")) {
+                matchState = {};
+                armyConfig.units.forEach(u => {
+                    let originalW = parseInt(u.stats.w) || 1;
+                    matchState[u.id] = { wounds: originalW, used: false, battleshocked: false };
+                    updateWoundUI(u.id);
+                    updateUsedUI(u.id);
+                    updateBattleshockUI(u.id);
+                });
+                saveState();
+            }
+        };
+
+        window.openFullSheet = (id) => {
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('action-buttons').style.display = 'none';
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeFullSheet = () => {
+            document.querySelectorAll('.sheet-overlay').forEach(s => s.style.display = 'none');
+            document.getElementById('action-buttons').style.display = 'flex';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.showRule = (e, r) => {
+            e.stopPropagation();
+            document.getElementById('ruleTitle').innerText = r;
+            
+            // Busca a descrição tanto nas habilidades quanto nos estratagemas
+            let desc = ruleDatabase[r];
+            if (!desc && stratagemDatabase[r]) {
+                desc = stratagemDatabase[r].desc;
+            }
+            
+            document.getElementById('ruleDesc').innerText = desc || "Descrição não encontrada.";
+            document.getElementById('ruleModal').style.display = 'flex';
+        };
+        window.closeRule = () => document.getElementById('ruleModal').style.display = 'none';
+
+        window.addEventListener('DOMContentLoaded', () => { renderFilters(); renderArmy(); });
+    </script>
+</body>
+</html>
