@@ -302,37 +302,38 @@
         // 1. BANCO DE DADOS DE REGRAS
         const ruleDatabase = {
             "Oath of Moment": "If your Army Faction is ADEPTUS ASTARTES, at the start of your Command phase, select one unit from your opponent’s army. Until the start of your next Command phase, that enemy unit is your Oath of Moment target. Each time a model with this ability makes an attack that targets your Oath of Moment target:You can re-roll the Hit roll.If you are using a Codex: Space Marines Detachment and your army does not include one or more units with the BLACK TEMPLARS, BLOOD ANGELS, DARK ANGELS, DEATHWATCH or SPACE WOLVES keywords, add 1 to the Wound roll as well.",
-            "Deep Strike": "Unit can be set up in Reserves instead of on the battlefield. Unit can be set up in your Reinforcements step, more than 9\" horizontally away from all enemy models.",
+            "Deep Strike": "Each time this unit makes an ingress move (20.04), if every model in this unit has this ability, it can be set up anywhere on the battlefield that is more than 8\" horizontally from all enemy units, even if that is within your opponent’s deployment zone.",
             "Rites of Battle": "Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
 			"Finest Hour":"Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.",
 			"Adept of the Codex":"CAPTAIN model only. At the start of your Command phase, if the bearer is on the battlefield, instead of selecting a Combat Doctrine to be active for your army, you can select the Tactical Doctrine. If you do, until the start of your next Command phase, that Combat Doctrine is active for the bearer’s unit only, even if you have already selected that Combat Doctrine to be active for your army this battle.",
 			"Astartes Banner":"While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.",
 			"Deeds of Heroism":"Once per battle, when this model is selected to fight, it can use this ability. If it does, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in this model’s unit.",
-            "Rapid Fire 1": "Increase the Attacks by 1 when targeting units within half range.",
-			"Rapid Fire 2": "Increase the Attacks by 2 when targeting units within half range.",
-			"Rapid Fire 3": "Increase the Attacks by 3 when targeting units within half range.",
-            "Assault": "Pode disparar mesmo após ter Avançado (Advance).",
+            "Rapid Fire 1": "This ability always takes the form [RAPID FIRE X]. Each time you gather attack dice for a [RAPID FIRE] weapon, add X additional attack dice if the target unit was within half range of that weapon in the Select Targets step.",
+			"Rapid Fire 2": "This ability always takes the form [RAPID FIRE X]. Each time you gather attack dice for a [RAPID FIRE] weapon, add X additional attack dice if the target unit was within half range of that weapon in the Select Targets step.",
+			"Rapid Fire 3": "This ability always takes the form [RAPID FIRE X]. Each time you gather attack dice for a [RAPID FIRE] weapon, add X additional attack dice if the target unit was within half range of that weapon in the Select Targets step.",
+            "Assault": "Units containing one or more models with an [ASSAULT] weapon can shoot using assault shooting (10.05).",
             "Objective Secured": "Esta unidade tem OC bônus para controlar objetivos.",
 			"Leader": "Before the battle, CHARACTER units with the Leader ability can be attached to one of their Bodyguard units to form an Attached unit. Attached units can only contain one Leader. Attacks cannot be allocated to CHARACTER models in Attached units.",
-			"Deadly Demise D3":"When this model is destroyed, roll one D6. On a 6, each unit within 6\" suffers ‘D3’ mortal wounds." ,
+			"Deadly Demise D3":"This ability always takes the form Deadly Demise X. Each time a model in this unit is destroyed, after the units embarked within it (if any) have made their emergency disembark moves, roll one D6. On a 6, that model suffers a deadly demise; each unit within 6\" of that model suffers a number of mortal wounds denoted by X (if this is a random number, roll separately for each unit within 6\")." ,
 			"Ballistus Strike":"Each time this model makes a ranged attack that targets a unit that is not Below Half-strength, you can re-roll the Hit roll.",
-			"Twin-Linked":"Weapons with [TWIN-LINKED] in their profile are known as Twin-linked weapons. Each time an attack is made with such a weapon, you can re-roll that attack’s Wound roll.",
-			"Blast":"Add 1 to the Attacks characteristic for every five models in the target unit (rounding down).Can never be used against a target that is within Engagement Range of any units from the attacking model’s army (including its own).",
+			"Twin-Linked":"Each time an attack is made with a [TWIN-LINKED] weapon, you can re-roll the wound roll.",
+			"Blast":"Each time you gather attack dice for a [BLAST] weapon, add one additional attack dice for every five models that were in the target unit in the Select Targets step (rounding down). If this ability takes the form [BLAST X], each time you gather attack dice for such a weapon, add X additional attack dice for every five models that were in the target unit in the Select Targets step(rounding down) instead.",
 			"Hammer of Wrath":"Each time this unit ends a Charge move, select one enemy unit within Engagement Range of it, then roll one D6 for each model in this unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers 1 mortal wound.",
 			"Astartes Banner":"While this unit contains an Ancient, add 1 to the Objective Control characteristic of models in this unit.",
 			"Command Squad":"While a CHARACTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.",
 			"Company Heroes":"You must attach one CAPTAIN or CHAPTER MASTER model to this unit. If this is not possible, this unit does not take part in the battle and counts as having been destroyed.",
 			"Pistol":"Can be shot even if the bearer’s unit is within Engagement Range of enemy units, but must target one of those enemy units. Cannot be shot alongside any other non-Pistol weapon (except by a MONSTER or VEHICLE).",
-			"Devastating Wounds":"A Critical Wound inflicts mortal wounds equal to the weapon’s Damage characteristic, instead of any normal damage.",
-			"Heavy":"Add 1 to Hit rolls if the bearer’s unit Remained Stationary this turn.",
-			"Sustained Hits 2":"Each Critical Hit scores ‘2’ additional hits on the target.",
-			"Precision":"When targeting an Attached unit, the attacking model’s player can have the attack allocated to a CHARACTER model in that unit visible to the bearer.",
-			"Meteoric Descent":"In your Movement phase, when this unit is set up on the battlefield using the Deep Strike ability, it can perform a meteoric descent. If it does, this unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.",
+			"Devastating Wounds":"Each time an attack made with a [DEVASTATING WOUNDS] weapon results in a critical wound, the attack sequence for that attack ends and the target unit suffers a number of mortal wounds equal to the D characteristic of that weapon. These are inflicted after resolving any normal damage inflicted by those attacks. Mortal wounds inflicted by [DEVASTATING WOUNDS] weapons can damage a maximum of one model for each critical wound; any remaining mortal wounds inflicted by that attack are lost. ",
+			"Heavy":"In your Shooting phase, each time an attack is made with a [HEAVY] weapon, add 1 to the hit roll if all of the following apply to the attacking unit: ▪ That unit is unengaged. ▪ That unit was not set up on the battlefield this turn. ▪ No model in that unit has moved more than 3\" this turn.",
+			"Sustained Hits 2":"This ability always takes the form [SUSTAINED HITS X]. Each time an attack made with a [SUSTAINED HITS] weapon results in a critical hit, that attack results in a number of additional hits on the target as denoted by X. ",
+			"Precision":"While resolving attacks made with one or more [PRECISION] weapons, at the start of the Allocation Order step (05.03), if the target unit contains one or more CHARACTER models visible to one or more of the attacking models, the active player can select one allocation group that contains one of those visible CHARACTER models. If they do, until those attacks are resolved, or until that CHARACTER group is destroyed (whichever happens first),that CHARACTER group is the current allocation group.",
+			"Meteoric Descent":"In your Movement phase, when this unit is set up on the battlefield using the Deep Strike ability, it can perform a meteoric descent. If it does, this unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge",
 			"Thunderous Impact":"Each time a model in this unit makes a melee attack, if this unit made a Charge move this turn, improve the Strength and Damage characteristics of that attack by 1.",
-			"Teleport Homer":"At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent’s deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3\" of that token and not within 9\" of any enemy models. That token is then removed.",
+			"Teleport Homer":"At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent’s deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3\" of that token and not within 8\" of any enemy models. That token is then removed.",
 			"Fury of the First": "Each time a model in this unit makes an attack that targets your Oath of Moment target, add 1 to the Hit roll.",
 			"Aquilon Optics":"Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving those attacks.",
-			"Anti-fly 2+":"An unmodified Wound roll of ‘2+’ against a target with the matching keyword scores a Critical Wound.",
+			"Anti-fly 2+":"This ability always takes the form [ANTI-X Y+]. Each time an attack is made with an [ANTI] weapon, if the target unit has the keyword denoted by X, an unmodified wound roll of Y+ is a critical wound.",
+			"Anti-infantry 4+":"This ability always takes the form [ANTI-X Y+]. Each time an attack is made with an [ANTI] weapon, if the target unit has the keyword denoted by X, an unmodified wound roll of Y+ is a critical wound.",
 			"The Imperium’s Sword":"You can re-roll Charge rolls made for this model’s unit.",
 			"Sternguard Focus":"Each time a model in this unit makes an attack that targets your Oath of Moment target, you can re-roll the Wound roll."
         };
@@ -341,7 +342,7 @@
             //Core
 			"COMMAND RE-ROLL": { cost: "1CP", phase: "Any phase, just after you make one of the following rolls for a friendly unit or model: ▪ Advance roll ▪ Charge roll ▪ Damage roll ▪ Hazard roll ▪ Hit roll ▪ Save roll ▪ Wound roll ▪ A roll to determine the number of attacks generated with a weapon", desc: "TARGET: That unit or model. EFFECT: You re‑roll that roll. If you are rolling more than one dice together, select one of those dice to re‑roll (excluding charge rolls, which you must re-roll in full)." },
 			"EXPLOSIVES": { cost: "1CP", phase: "Your Shooting phase", desc: "TARGET: One friendly unengaged EXPLOSIVES/GRENADES unit that is eligible to shoot and did not make an advance move this turn. EFFECT: Resolve the following sequence: 1. Select one EXPLOSIVES/GRENADES model in your unit. 2. Select one unengaged enemy unit within 8\" of and visible to that model. 3. Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound (06.02)." },
-			"EPIC CHALLENGE": { cost: "1CP", phase: "Fight phase, when a CHARACTER unit from your army that is within Engagement Range of one or more Attached units is selected to fight.", desc: "TARGET: One CHARACTER model in your unit.EFFECT: Until the end of the phase, all melee attacks made by that model have the [PRECISION] ability."},			
+			"EPIC CHALLENGE": { cost: "1CP", phase: "Fight phase, when a CHARACTER unit from your army that is within Engagement Range of one or more Attached units is selected to fight.", desc: "TARGET: One CHARACTER model in your unit. EFFECT: Until the end of the phase, all melee attacks made by that model have the [PRECISION] ability."},			
 			"CRUSHING IMPACT": { cost: "1CP", phase: "Your Charge phase, just after a friendly MONSTER/VEHICLE unit ends a charge move.", desc: "TARGET: That MONSTER/VEHICLE unit. EFFECT: Resolve the following sequence: 1. Select one enemy unit engaged with your unit. 2. Select one model in your unit engaged with that enemy unit. 3. Roll a number of D6 equal to the T characteristic of that model: for each 1, your unit suffers 1 mortal wound; for each 5+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds per unit)."},			
 			"INSANE BRAVERY": { cost: "1CP", phase: "Battle‑shock step of your Command phase, just before you make a battle-shock roll for a friendly unit.", desc: "TARGET: That unit. EFFECT: That battle-shock roll is automatically successful. RESTRICTIONS: You cannot use this stratagem more than once per battle." },
 			"RAPID INGRESS": { cost: "1CP", phase: "End of your opponent’s Movement phase", desc: "TARGET: One friendly unit that is in strategic reserves (excluding AIRCRAFT). EFFECT: Your unit makes an ingress move (20.04). RESTRICTIONS: You cannot use this stratagem during the first battle round. " },
@@ -363,19 +364,19 @@
 		
         const armyConfig = {
             units: [
-			    {
-                    id: "captain", name: "Captain", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain", imgText: "CP",
-                    subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, CAPTAIN",
-                    stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '5', ld: '6+', oc: '1' },
-                    stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"],
-                    coreAbilities: ["Leader"], 
-                    damaged: null,
-                    factionAbilities: ["Oath of Moment"],
-                    unitAbilities: ["Rites of Battle", "Finest Hour", "Adept of the Codex"],
-                    rangedWeapons: [{ name: "Master-crafted bolter", tags: [], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" }],
-					rangedWeapons: [{ name: "Bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "2+", s: "4", ap: "0", d: "1" }],
-                    meleeWeapons: [{ name: "Master-crafted power weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }]
-                },
+			    <!-- { -->
+                    <!-- id: "captain", name: "Captain", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain", imgText: "CP", -->
+                    <!-- subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, CAPTAIN", -->
+                    <!-- stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '5', ld: '6+', oc: '1' }, -->
+                    <!-- stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"], -->
+                    <!-- coreAbilities: ["Leader"],  -->
+                    <!-- damaged: null, -->
+                    <!-- factionAbilities: ["Oath of Moment"], -->
+                    <!-- unitAbilities: ["Rites of Battle", "Finest Hour", "Adept of the Codex"], -->
+                    <!-- rangedWeapons: [{ name: "Master-crafted bolter", tags: [], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" }], -->
+					<!-- rangedWeapons: [{ name: "Bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "2+", s: "4", ap: "0", d: "1" }], -->
+                    <!-- meleeWeapons: [{ name: "Master-crafted power weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }] -->
+                <!-- }, -->
 			    {
                     id: "captainTerminatorArmor", name: "Captain in Terminator Armour", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain-In-Terminator-Armour", imgText: "CPTA",
                     subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, IMPERIUM, TERMINATOR, CAPTAIN",
@@ -385,23 +386,24 @@
                     damaged: null,
                     factionAbilities: ["Oath of Moment"],
                     unitAbilities: ["Rites of Battle", "The Imperium’s Sword"],
-                    rangedWeapons: [{ name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "0", d: "1" }],
-					rangedWeapons: [{ name: "Combi-weapon", tags: ["Anti-infantry 4+", "Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" }],
-                    meleeWeapons: [{ name: "Relic fist", tags: [], a: "5", ws: "2+", s: "8", ap: "-2", d: "2" }],
-					meleeWeapons: [{ name: "Relic weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }]
+                    rangedWeapons: [
+								    { name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "0", d: "1" }, 
+					                { name: "Combi-weapon", tags: ["Anti-infantry 4+", "Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" }
+								   ],
+                    meleeWeapons: [{ name: "Relic fist", tags: [], a: "5", ws: "2+", s: "8", ap: "-2", d: "2" }, { name: "Relic weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }]
                 },				
-				{
-                    id: "bladeGuard", name: "Bladeguard Ancient", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Bladeguard-Ancient", imgText: "BA",
-                    subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, ANCIENT, BLADEGUARD ANCIENT",
-                    stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '4', ld: '6+', oc: '1' },
-                    stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"],
-                    coreAbilities: ["Leader"], 
-                    damaged: null,
-                    factionAbilities: ["Oath of Moment"],
-                    unitAbilities: ["Astartes Banner", "Deeds of Heroism"],
-					rangedWeapons: [{ name: "Heavy bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "3+", s: "4", ap: "-1", d: "1" }],
-                    meleeWeapons: [{ name: "Close combat weapon", tags: [], a: "5", ws: "2+", s: "4", ap: "0", d: "1" }]
-                },
+				<!-- { -->
+                    <!-- id: "bladeGuard", name: "Bladeguard Ancient", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Bladeguard-Ancient", imgText: "BA", -->
+                    <!-- subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, ANCIENT, BLADEGUARD ANCIENT", -->
+                    <!-- stats: { m: '6"', t: '4', sv: '3+', inv: '4++', w: '4', ld: '6+', oc: '1' }, -->
+                    <!-- stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"], -->
+                    <!-- coreAbilities: ["Leader"],  -->
+                    <!-- damaged: null, -->
+                    <!-- factionAbilities: ["Oath of Moment"], -->
+                    <!-- unitAbilities: ["Astartes Banner", "Deeds of Heroism"], -->
+					<!-- rangedWeapons: [{ name: "Heavy bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "3+", s: "4", ap: "-1", d: "1" }], -->
+                    <!-- meleeWeapons: [{ name: "Close combat weapon", tags: [], a: "5", ws: "2+", s: "4", ap: "0", d: "1" }] -->
+                <!-- }, -->
                 {
                     id: "intercessorsJumpPack", name: "Assault Intercessors With Jump Packs", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Assault-Intercessors-With-Jump-Packs", imgText: "IN",
                     subtitle: "Infantry • Fly", keywords: "INFANTRY, GRENADES, JUMP PACK, FLY, IMPERIUM, TACTICUS, ASSAULT INTERCESSORS WITH JUMP PACKS, ADEPTUS ASTARTES",
@@ -414,26 +416,26 @@
                     rangedWeapons: [{ name: "Heavy bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "3+", s: "4", ap: "-1", d: "1" }],
                     meleeWeapons: [{ name: "Astartes chainsword", tags: [], a: "4", ws: "3+", s: "4", ap: "-1", d: "1" }]
                 },
-				{
-					id: "companyHeroes", name: "Company Heroes", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Company-Heroes", imgText: "CH",
-					subtitle: "Infantry • Ancient", keywords: "INFANTRY, GRENADES, IMPERIUM, TACTICUS, COMPANY HEROES, ANCIENT, ADEPTUS ASTARTES",
-					stats: { m: '6"', t: '4', sv: '3+', inv: '-', w: '4', ld: '6+', oc: '1' },
-                    stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"],
-					coreAbilities: null, 	
-					damaged: null,
-					factionAbilities: ["Oath of Moment"],
-					unitAbilities: ["Astartes Banner", "Command Squad", "Company Heroes"],
-					rangedWeapons: [
-					                { name: "Bolt Pistol Ancient, Company Champion, Company Veteran e Company Veteran", tags: ["Pistol"], range: "12\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" }, 
-									{ name: "Bolt rifle Ancient", tags: [], range: "24\"", a: "2", bs: "3+", s: "4", ap: "-1", d: "D6" },
-									{ name: "Master-crafted bolt rifle Company Veteran", tags: ["Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" },
-									{ name: "Master-crafted heavy bolter Company Veteran", tags: ["Heavy", "Sustained Hits 2"], range: "36\"", a: "3", bs: "3+", s: "5", ap: "-1", d: "3" },
-								   ],
-					meleeWeapons: [
-					               { name: "Close combat weapon Ancient, Company Veteran e Company Veteran", tags: [], a: "5", ws: "3+", s: "4", ap: "0", d: "1" },
-					               { name: "Master-crafted power weapon Company Champion", tags: ["Precision"], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }
-								  ]
-                },
+				<!-- { -->
+					<!-- id: "companyHeroes", name: "Company Heroes", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Company-Heroes", imgText: "CH", -->
+					<!-- subtitle: "Infantry • Ancient", keywords: "INFANTRY, GRENADES, IMPERIUM, TACTICUS, COMPANY HEROES, ANCIENT, ADEPTUS ASTARTES", -->
+					<!-- stats: { m: '6"', t: '4', sv: '3+', inv: '-', w: '4', ld: '6+', oc: '1' }, -->
+                    <!-- stratagems: ["COMMAND RE-ROLL", "EXPLOSIVES", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"], -->
+					<!-- coreAbilities: null, 	 -->
+					<!-- damaged: null, -->
+					<!-- factionAbilities: ["Oath of Moment"], -->
+					<!-- unitAbilities: ["Astartes Banner", "Command Squad", "Company Heroes"], -->
+					<!-- rangedWeapons: [ -->
+					                <!-- { name: "Bolt Pistol Ancient, Company Champion, Company Veteran e Company Veteran", tags: ["Pistol"], range: "12\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" },  -->
+									<!-- { name: "Bolt rifle Ancient", tags: [], range: "24\"", a: "2", bs: "3+", s: "4", ap: "-1", d: "D6" }, -->
+									<!-- { name: "Master-crafted bolt rifle Company Veteran", tags: ["Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "-1", d: "2" }, -->
+									<!-- { name: "Master-crafted heavy bolter Company Veteran", tags: ["Heavy", "Sustained Hits 2"], range: "36\"", a: "3", bs: "3+", s: "5", ap: "-1", d: "3" }, -->
+								   <!-- ], -->
+					<!-- meleeWeapons: [ -->
+					               <!-- { name: "Close combat weapon Ancient, Company Veteran e Company Veteran", tags: [], a: "5", ws: "3+", s: "4", ap: "0", d: "1" }, -->
+					               <!-- { name: "Master-crafted power weapon Company Champion", tags: ["Precision"], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" } -->
+								  <!-- ] -->
+                <!-- }, -->
 				{
 					id: "sternguardVeteran", name: "Sternguard Veteran Squad", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Sternguard-Veteran-Squad", imgText: "CH",
 					subtitle: "Infantry", keywords: " INFANTRY, GRENADES, IMPERIUM, TACTICUS, STERNGUARD VETERAN SQUAD",
