@@ -377,21 +377,37 @@
 					<!-- rangedWeapons: [{ name: "Bolt pistol", tags: ["Pistol"], range: "18\"", a: "1", bs: "2+", s: "4", ap: "0", d: "1" }], -->
                     <!-- meleeWeapons: [{ name: "Master-crafted power weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }] -->
                 <!-- }, -->
-			    {
-                    id: "captainTerminatorArmor", name: "Captain in Terminator Armour", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain-In-Terminator-Armour", imgText: "CPTA",
-                    subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, IMPERIUM, TERMINATOR, CAPTAIN",
-                    stats: { m: '5"', t: '5', sv: '2+', inv: '4++', w: '6', ld: '6+', oc: '1' },
+			    <!-- { -->
+                    <!-- id: "captainTerminatorArmor", name: "Captain in Terminator Armour", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Captain-In-Terminator-Armour", imgText: "CPTA", -->
+                    <!-- subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, IMPERIUM, TERMINATOR, CAPTAIN", -->
+                    <!-- stats: { m: '5"', t: '5', sv: '2+', inv: '4++', w: '6', ld: '6+', oc: '1' }, -->
+                    <!-- stratagems: ["COMMAND RE-ROLL", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"], -->
+                    <!-- coreAbilities: ["Leader", "Deep Strike"],  -->
+                    <!-- damaged: null, -->
+                    <!-- factionAbilities: ["Oath of Moment"], -->
+                    <!-- unitAbilities: ["Rites of Battle", "The Imperium’s Sword"], -->
+                    <!-- rangedWeapons: [ -->
+								    <!-- { name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "0", d: "1" },  -->
+					                <!-- { name: "Combi-weapon", tags: ["Anti-infantry 4+", "Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" } -->
+								   <!-- ], -->
+                    <!-- meleeWeapons: [{ name: "Relic fist", tags: [], a: "5", ws: "2+", s: "8", ap: "-2", d: "2" }, { name: "Relic weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }] -->
+                <!-- },				 -->
+				{
+                    id: "librarianTerminatorArmor", name: "Librarian In Terminator Armour", wahaLink: "https://wahapedia.ru/wh40k11ed/factions/space-marines/Librarian-In-Terminator-Armour", imgText: "CPTA",
+                    subtitle: "Infantry • Character", keywords: "INFANTRY; CHARACTER; PSYKER; IMPERIUM; TERMINATOR; LIBRARIAN",
+                    stats: { m: '5"', t: '5', sv: '2+', inv: '4++', w: '5', ld: '6+', oc: '1' },
                     stratagems: ["COMMAND RE-ROLL", "EPIC CHALLENGE", "INSANE BRAVERY", "RAPID INGRESS", "FIRE OVERWATCH", "HEROIC INTERVENTION", "COUNTER-OFFENSIVE", "CRUSADING CONQUERORS", "SCIONS OF GUILLIMAN", "FURIOUS DEDICATION", "ULTRAMARIAN DESTINY", "FIGHT TO THE END", "MARCHING EVER ON"],
                     coreAbilities: ["Leader", "Deep Strike"], 
                     damaged: null,
                     factionAbilities: ["Oath of Moment"],
-                    unitAbilities: ["Rites of Battle", "The Imperium’s Sword"],
+                    unitAbilities: ["Psychic Hood", "Veil of Time (Psychic)"],
                     rangedWeapons: [
-								    { name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "2+", s: "4", ap: "0", d: "1" }, 
-					                { name: "Combi-weapon", tags: ["Anti-infantry 4+", "Devastating Wounds", "Rapid Fire 1"], range: "24\"", a: "1", bs: "3+", s: "4", ap: "0", d: "1" }
+								    { name: "Storm bolter", tags: ["Rapid Fire 2"], range: "24\"", a: "2", bs: "3+", s: "4", ap: "0", d: "1" }, 
+					                { name: "->Smite – witchfire", tags: ["Psychic"], range: "24\"", a: "D6", bs: "3+", s: "5", ap: "-1", d: "D3" },
+									{ name: "->Smite – focused witchfire", tags: ["Psychic", "Devastating Wounds", ], range: "24\"", a: "D6", bs: "3+", s: "5", ap: "-1", d: "D3" }
 								   ],
-                    meleeWeapons: [{ name: "Relic fist", tags: [], a: "5", ws: "2+", s: "8", ap: "-2", d: "2" }, { name: "Relic weapon", tags: [], a: "6", ws: "2+", s: "5", ap: "-2", d: "2" }]
-                },				
+                    meleeWeapons: [{ name: "Force weapon", tags: ["Psychic"], a: "4", ws: "3+", s: "6", ap: "-1", d: "D3" }]
+                },		
 				<!-- { -->
                     <!-- id: "bladeGuard", name: "Bladeguard Ancient", wahaLink: "https://wahapedia.ru/wh40k10ed/factions/space-marines/Bladeguard-Ancient", imgText: "BA", -->
                     <!-- subtitle: "Infantry • Character", keywords: "INFANTRY, CHARACTER, GRENADES, IMPERIUM, TACTICUS, ANCIENT, BLADEGUARD ANCIENT", -->
