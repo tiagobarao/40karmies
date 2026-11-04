@@ -313,7 +313,7 @@
         const ruleDatabase = {
             // --- ARMY RULES (Codex Space Marines - 11ª ed.) ---
             "Combat Doctrines": "At the start of your Command phase, you can select one combat doctrine. Until the start of your next Command phase, that doctrine is active for friendly ADEPTUS ASTARTES units with this ability. Each combat doctrine can be selected once per battle (unless otherwise stated). Only one combat doctrine can be active for a unit at a time; if a rule makes a different doctrine active for it, the previous one stops being active.\n\n▪ ASSAULT DOCTRINE: When this unit makes an advance move, that move does not prevent it from being eligible to declare a charge.\n▪ DEVASTATOR DOCTRINE: This unit's ranged attacks have [ASSAULT].\n▪ TACTICAL DOCTRINE: When this unit makes a fall-back move, that move does not prevent it from being eligible to shoot or declare a charge.",
-            "Transhuman Strategist": "At the start of each battle round, if a model with this ability is your WARLORD, you gain 1CP.",
+            "Transhuman Strategist": "At the start of each battle round, if a model with this ability is your WARLORD, you gain 1CP. (O Captain é o seu WARLORD: +1CP no início de cada rodada.)",
             // --- DETACHMENT RULES ---
             "Devastator Mastery": "(Detachment: Devastator Brethren) You can select the Devastator Doctrine one additional time per battle (2x no total).",
             "Death Blow": "(Detachment: Terminator Storm Force) Friendly ADEPTUS ASTARTES TERMINATOR units have +1 to Charge rolls.",
@@ -349,7 +349,8 @@
             "Close-Quarters": "[PISTOL] and [CLOSE-QUARTERS] are identical for all rules purposes. Units containing one or more models with a [CLOSE-QUARTERS] weapon can shoot using close-quarters shooting (10.06): eligible if the unit is engaged and did not make an advance move; models can target enemy units they are engaged with. When using another shooting type, for each model in that unit (excluding MONSTER/VEHICLE models), you can only select one of the following to make attacks with: ▪ One or more of its [CLOSE-QUARTERS] weapons. ▪ One or more of its other ranged weapons.",
             "Torrent": "Each time an attack is made with a [TORRENT] weapon, that attack automatically hits the target.",
             "Ignores Cover": "Each time an attack is made with an [IGNORES COVER] weapon, the target cannot have the benefit of cover against that attack (13.08), including from rules that give a model or unit the benefit of cover (e.g. Stealth).",
-            "Psychic": "Each time an attack is made with a [PSYCHIC] weapon, you can ignore any or all modifiers to that attack’s BS or WS characteristic and any or all modifiers to the hit roll."
+            "Psychic": "Each time an attack is made with a [PSYCHIC] weapon, you can ignore any or all modifiers to that attack’s BS or WS characteristic and any or all modifiers to the hit roll.",
+            "Hazardous": "Each time a unit is selected to shoot or fight, after it has resolved all of its attacks, make one hazard roll for each [HAZARDOUS] weapon selected: roll one D6; on a 1-2 that roll fails and the unit suffers 1 mortal wound (3 if every model is a MONSTER/VEHICLE)."
         };
 
         const stratagemDatabase = {
@@ -385,11 +386,11 @@
         // Lista: 1k sem Tanque (995 pts) - Devastator Brethren + Terminator Storm Force (2DP) - Incursion
         const armyConfig = {
             listName: "1k sem Tanque — 995 pts",
-            detachments: "Devastator Brethren + Terminator Storm Force (2DP) • Ultramarines • Incursion",
+            detachments: "Devastator Brethren + Terminator Storm Force (2DP) • Ultramarines • Incursion • Priority Assets",
             units: [
                 {
                     id: "captainTerminatorArmor", name: "Captain in Terminator Armour", wahaLink: "https://wahapedia.ru/wh40k11ed/factions/space-marines/Captain-In-Terminator-Armour", imgText: "CPTA",
-                    subtitle: "Infantry • Character • Terminator", keywords: "INFANTRY, CAPTAIN, CHARACTER, IMPERIUM, TERMINATOR, DEATHWING",
+                    subtitle: "Infantry • Character • Terminator • Warlord", keywords: "INFANTRY, CAPTAIN, CHARACTER, IMPERIUM, TERMINATOR, DEATHWING, WARLORD",
                     points: "105 pts (90 + 15 Enhancement)",
                     stats: { m: '5"', t: '6', sv: '2+', inv: '4++', w: '6', ld: '6+', oc: '1' },
                     stratagems: STRATS_TERMINATOR,
@@ -451,10 +452,13 @@
                     factionAbilities: ["Combat Doctrines"],
                     unitAbilities: ["Hammer of Wrath"],
                     rangedWeapons: [
-                        { name: "Heavy Bolt Pistol", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" }
+                        { name: "Heavy Bolt Pistol (Intercessors)", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "-> Plasma Pistol – standard (Sargento)", tags: ["Close-Quarters"], range: "12\"", a: "1", bs: "3+", s: "7", ap: "-2", d: "1" },
+                        { name: "-> Plasma Pistol – supercharge (Sargento)", tags: ["Close-Quarters", "Hazardous"], range: "12\"", a: "1", bs: "3+", s: "8", ap: "-3", d: "2" }
                     ],
                     meleeWeapons: [
-                        { name: "Chainsword", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" }
+                        { name: "Chainsword (Intercessors)", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "Power Weapon (Sargento)", tags: [], a: "4", ws: "3+", s: "5", ap: "-2", d: "1" }
                     ]
                 },
                 {
@@ -510,7 +514,7 @@
                     ],
                     meleeWeapons: [
                         { name: "Ceramite Fists (Veterans)", tags: [], a: "4", ws: "3+", s: "5", ap: "0", d: "1" },
-                        { name: "Chainsword (Sargento)", tags: [], a: "6", ws: "3+", s: "5", ap: "-1", d: "1" }
+                        { name: "Power Weapon (Sargento)", tags: [], a: "5", ws: "3+", s: "5", ap: "-2", d: "1" }
                     ]
                 },
                 {
@@ -524,7 +528,9 @@
                     factionAbilities: ["Combat Doctrines"],
                     unitAbilities: ["Full-throttle Assault"],
                     rangedWeapons: [
-                        { name: "Heavy Bolt Pistol", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "Heavy Bolt Pistol (Outriders)", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "-> Plasma Pistol – standard (Sargento)", tags: ["Close-Quarters"], range: "12\"", a: "1", bs: "3+", s: "7", ap: "-2", d: "1" },
+                        { name: "-> Plasma Pistol – supercharge (Sargento)", tags: ["Close-Quarters", "Hazardous"], range: "12\"", a: "1", bs: "3+", s: "8", ap: "-3", d: "2" },
                         { name: "Twin Bolt Rifle", tags: ["Assault", "Rapid Fire 2", "Twin-Linked"], range: "24\"", a: "2", bs: "2+", s: "5", ap: "-1", d: "1" }
                     ],
                     meleeWeapons: [
@@ -542,7 +548,9 @@
                     factionAbilities: ["Combat Doctrines"],
                     unitAbilities: ["Full-throttle Assault"],
                     rangedWeapons: [
-                        { name: "Heavy Bolt Pistol", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "Heavy Bolt Pistol (Outriders)", tags: ["Close-Quarters"], range: "18\"", a: "1", bs: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "-> Plasma Pistol – standard (Sargento)", tags: ["Close-Quarters"], range: "12\"", a: "1", bs: "3+", s: "7", ap: "-2", d: "1" },
+                        { name: "-> Plasma Pistol – supercharge (Sargento)", tags: ["Close-Quarters", "Hazardous"], range: "12\"", a: "1", bs: "3+", s: "8", ap: "-3", d: "2" },
                         { name: "Twin Bolt Rifle", tags: ["Assault", "Rapid Fire 2", "Twin-Linked"], range: "24\"", a: "2", bs: "2+", s: "5", ap: "-1", d: "1" }
                     ],
                     meleeWeapons: [
