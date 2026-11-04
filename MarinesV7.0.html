@@ -318,7 +318,7 @@
             "Devastator Mastery": "(Detachment: Devastator Brethren) You can select the Devastator Doctrine one additional time per battle (2x no total).",
             "Death Blow": "(Detachment: Terminator Storm Force) Friendly ADEPTUS ASTARTES TERMINATOR units have +1 to Charge rolls.",
             // --- ENHANCEMENTS ---
-            "Master-forged Firearms": "(Enhancement - Devastator Brethren, 15 pts) ADEPTUS ASTARTES INFANTRY/MOUNTED model only. The bearer's ranged attacks (excluding [PSYCHIC] attacks) have +1 to the A, S, AP and D characteristics. (Já aplicado na tabela de armas.)",
+            "Master-forged Firearms": "(Enhancement - Devastator Brethren, 15 pts) ADEPTUS ASTARTES INFANTRY/MOUNTED model only. The bearer's ranged attacks (excluding [PSYCHIC] attacks) have +1 to the A, S, AP and D characteristics. (Já aplicado na tabela de armas — Combi-weapon base: Infernus A3 S4 AP0 D1 • Purgatus A2 S7 AP-2 D2 • Damnatus A1 S9 AP-3 D3+2.)",
             // --- DATASHEET ABILITIES ---
             "Strategic Acumen": "(Transhuman Strategist) In your Command phase, you can use this ability. If you do, one combat doctrine becomes active for this unit until the start of your next Command phase.",
             "Unstoppable Valour": "This unit can re-roll Charge rolls.",
@@ -399,7 +399,9 @@
                     factionAbilities: ["Combat Doctrines", "Transhuman Strategist", "Death Blow"],
                     unitAbilities: ["Leading Terminator Squad", "Strategic Acumen", "Unstoppable Valour", "Master-forged Firearms"],
                     rangedWeapons: [
-                        { name: "Storm Bolter (Master-forged Firearms)", tags: ["Rapid Fire 2"], range: "24\"", a: "3", bs: "2+", s: "6", ap: "-2", d: "2" }
+                        { name: "-> Combi-weapon – Infernus (MFF)", tags: ["Blast 1", "Torrent"], range: "12\"", a: "4", bs: "N/A", s: "5", ap: "-1", d: "2" },
+                        { name: "-> Combi-weapon – Purgatus (MFF)", tags: [], range: "24\"", a: "3", bs: "2+", s: "8", ap: "-3", d: "3" },
+                        { name: "-> Combi-weapon – Damnatus (MFF)", tags: ["Melta 2"], range: "12\"", a: "2", bs: "2+", s: "10", ap: "-4", d: "D3+3" }
                     ],
                     meleeWeapons: [
                         { name: "Relic Weapon", tags: [], a: "6", ws: "2+", s: "6", ap: "-2", d: "2" }
