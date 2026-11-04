@@ -344,6 +344,7 @@
             "Heavy": "In your Shooting phase, each time an attack is made with a [HEAVY] weapon, add 1 to the hit roll if all of the following apply to the attacking unit: ▪ That unit is unengaged. ▪ That unit was not set up on the battlefield this turn. ▪ No model in that unit has moved more than 3\" this turn.",
             "Sustained Hits 1": "This ability always takes the form [SUSTAINED HITS X]. Each time an attack made with a [SUSTAINED HITS] weapon results in a critical hit, that attack results in a number of additional hits on the target as denoted by X.",
             "Sustained Hits 2": "This ability always takes the form [SUSTAINED HITS X]. Each time an attack made with a [SUSTAINED HITS] weapon results in a critical hit, that attack results in a number of additional hits on the target as denoted by X.",
+            "Devastating Wounds": "Each time an attack made with a [DEVASTATING WOUNDS] weapon results in a critical wound, the attack sequence for that attack ends and the target unit suffers a number of mortal wounds equal to the D characteristic of that weapon. These are inflicted after resolving any normal damage inflicted by those attacks. Mortal wounds inflicted by [DEVASTATING WOUNDS] weapons can damage a maximum of one model for each critical wound; any remaining mortal wounds inflicted by that attack are lost.",
             "Lethal Hits": "Each time an attack made with a [LETHAL HITS] weapon results in a critical hit, that attack automatically wounds the target.",
             "Melta 2": "This ability takes the form [MELTA X]. Each time an attack made with a [MELTA X] weapon targets a unit within half range of that weapon, that attack's Damage characteristic is increased by X.",
             "Close-Quarters": "[PISTOL] and [CLOSE-QUARTERS] are identical for all rules purposes. Units containing one or more models with a [CLOSE-QUARTERS] weapon can shoot using close-quarters shooting (10.06): eligible if the unit is engaged and did not make an advance move; models can target enemy units they are engaged with. When using another shooting type, for each model in that unit (excluding MONSTER/VEHICLE models), you can only select one of the following to make attacks with: ▪ One or more of its [CLOSE-QUARTERS] weapons. ▪ One or more of its other ranged weapons.",
@@ -529,7 +530,8 @@
                         { name: "Twin Bolt Rifle", tags: ["Assault", "Rapid Fire 2", "Twin-Linked"], range: "24\"", a: "2", bs: "2+", s: "5", ap: "-1", d: "1" }
                     ],
                     meleeWeapons: [
-                        { name: "Chainsword", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" }
+                        { name: "Chainsword (Outriders)", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "Thunder Hammer (Sargento)", tags: ["Devastating Wounds"], a: "3", ws: "4+", s: "8", ap: "-2", d: "3" }
                     ]
                 },
                 {
@@ -548,7 +550,8 @@
                         { name: "Twin Bolt Rifle", tags: ["Assault", "Rapid Fire 2", "Twin-Linked"], range: "24\"", a: "2", bs: "2+", s: "5", ap: "-1", d: "1" }
                     ],
                     meleeWeapons: [
-                        { name: "Chainsword", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" }
+                        { name: "Chainsword (Outriders)", tags: [], a: "4", ws: "3+", s: "5", ap: "-1", d: "1" },
+                        { name: "Thunder Hammer (Sargento)", tags: ["Devastating Wounds"], a: "3", ws: "4+", s: "8", ap: "-2", d: "3" }
                     ]
                 }
             ]
